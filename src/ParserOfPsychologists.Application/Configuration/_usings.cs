@@ -15,7 +15,7 @@ global using HtmlAgilityPack;
 global using ParserOfPsychologists.Application;
 global using ParserOfPsychologists.Application.Parser;
 global using ParserOfPsychologists.Application.Models;
-global using ParserOfPsychologists.Application.Models.Deserializable;
+global using ParserOfPsychologists.Application.Models.ResponseBackend;
 global using ParserOfPsychologists.Application.Toolkit;
 global using ParserOfPsychologists.Application.Components;
 global using ParserOfPsychologists.Application.Interfaces;

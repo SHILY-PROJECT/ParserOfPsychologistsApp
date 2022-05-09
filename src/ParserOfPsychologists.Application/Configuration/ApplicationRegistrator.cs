@@ -9,11 +9,13 @@ public static class ApplicationRegistrator
         services
             .AddScoped<IStateOfCityModule, StateOfCityModule>()
             .AddScoped<IParser, MainParser>()
+            .AddScoped<IParserSettings, ParserSettings>()
             .AddScoped<IParserWebRequestsFacade, ParserWebFacade>()
             .AddScoped<IHttpClientConfiguration, HttpClientConfiguration>(opt => cfg)
             .AddScoped<IAccountManager, AccountManager>()
             .AddScoped<AccountData>()
             .AddScoped<AuthorizationModule>()
+            .AddScoped<PageNavigator>()
             .AddTransient(opt => HttpHelper.CreateHttpClient(cfg));
 
         return services;
