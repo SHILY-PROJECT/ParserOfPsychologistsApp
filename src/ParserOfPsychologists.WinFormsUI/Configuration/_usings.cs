@@ -7,4 +7,5 @@ global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.DependencyInjection;
 global using ParserOfPsychologists.Application.Configuration;
 global using ParserOfPsychologists.WinFormsUI;
+global using ParserOfPsychologists.Application.Interfaces;
 global using ParserOfPsychologists.WinFormsUI.Configuration;

@@ -15,7 +15,7 @@ partial class MainForms
 
     private void InitializeComponent()
     {
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.citiesBox = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -26,14 +26,14 @@ partial class MainForms
             // 
             // comboBox1
             // 
-            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.citiesBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(6, 37);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(180, 23);
-            this.comboBox1.TabIndex = 0;
+            this.citiesBox.FormattingEnabled = true;
+            this.citiesBox.Location = new System.Drawing.Point(6, 37);
+            this.citiesBox.Name = "comboBox1";
+            this.citiesBox.Size = new System.Drawing.Size(256, 23);
+            this.citiesBox.TabIndex = 0;
             // 
             // groupBox1
             // 
@@ -41,10 +41,10 @@ partial class MainForms
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Controls.Add(this.comboBox1);
+            this.groupBox1.Controls.Add(this.citiesBox);
             this.groupBox1.Location = new System.Drawing.Point(12, 2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(192, 355);
+            this.groupBox1.Size = new System.Drawing.Size(268, 355);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Поиск";
@@ -54,10 +54,11 @@ partial class MainForms
             this.comboBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Location = new System.Drawing.Point(6, 81);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(180, 23);
+            this.comboBox2.Size = new System.Drawing.Size(256, 23);
             this.comboBox2.TabIndex = 3;
             // 
             // label2
@@ -84,7 +85,7 @@ partial class MainForms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.Location = new System.Drawing.Point(6, 119);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(180, 30);
+            this.button1.Size = new System.Drawing.Size(256, 30);
             this.button1.TabIndex = 1;
             this.button1.Text = "Парсить";
             this.button1.UseVisualStyleBackColor = true;
@@ -105,7 +106,7 @@ partial class MainForms
 
     }
 
-    private ComboBox comboBox1;
+    private ComboBox citiesBox;
     private GroupBox groupBox1;
     private Button button1;
     private ComboBox comboBox2;
