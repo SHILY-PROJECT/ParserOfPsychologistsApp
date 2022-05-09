@@ -14,6 +14,7 @@ global using Microsoft.Extensions.DependencyInjection;
 global using HtmlAgilityPack;
 global using ParserOfPsychologists.Application;
 global using ParserOfPsychologists.Application.Parser;
+global using ParserOfPsychologists.Application.Parser.Components;
 global using ParserOfPsychologists.Application.Models;
 global using ParserOfPsychologists.Application.Models.ResponseBackend;
 global using ParserOfPsychologists.Application.Toolkit;
