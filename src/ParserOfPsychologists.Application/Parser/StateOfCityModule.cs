@@ -4,6 +4,10 @@ public class StateOfCityModule : IStateOfCityModule
 {
     private readonly string _mainUrl = "https://www.b17.ru";
 
+    private string _cityName = string.Empty;
+    private string _cityRoute = string.Empty;
+    private string _cityChangeKey = string.Empty;
+
     private readonly HttpClient _client;
 
     public StateOfCityModule(HttpClient client)
@@ -11,15 +15,12 @@ public class StateOfCityModule : IStateOfCityModule
         _client = client;
     }
 
-    public string CityId { get; set; } = string.Empty;
-    public string CityName { get; set; } = string.Empty;
-    public string LocationRoute { get; set; } = string.Empty;
-    public Uri Url { get => new($"{_mainUrl}{LocationRoute}"); }
+    public Uri CityUrl { get => new($"{_mainUrl}{_cityRoute}"); }
     public Dictionary<string, string> DefaultCities { get; } = new();
     public Dictionary<string, string> Cities { get; } = new();
 
     public bool IsChanged(string cityName) =>
-        CityName.Equals(cityName, StringComparison.OrdinalIgnoreCase);
+        !string.IsNullOrWhiteSpace(cityName) && !_cityName.Equals(cityName, StringComparison.OrdinalIgnoreCase);
 
     public async Task<IEnumerable<string>> FindCityAsync(string cityName)
     {
@@ -42,7 +43,7 @@ public class StateOfCityModule : IStateOfCityModule
         var cityBackend = JsonSerializer.Deserialize<CityBackendModel>(resp) ?? new();
         doc.LoadHtml(cityBackend.Body);
 
-        var key = doc.DocumentNode?.SelectSingleNode(xPathCityChangeKey)?.GetAttributeValue("value", string.Empty) ?? string.Empty;
+        _cityChangeKey = doc.DocumentNode?.SelectSingleNode(xPathCityChangeKey)?.GetAttributeValue("value", string.Empty) ?? string.Empty;
         doc.DocumentNode?.SelectNodes(xPathCity).ToList().ForEach(hn => Cities.Add(hn.InnerHtml, hn.GetAttributeValue("city", string.Empty)));
 
         return Cities.Select(kv => kv.Key);
@@ -50,6 +51,19 @@ public class StateOfCityModule : IStateOfCityModule
 
     public async Task ChangeCityAsync(string cityName)
     {
+        var msg = new HttpRequestMessage
+        {
+            Method = HttpMethod.Get,
+            RequestUri = new Uri($"{_mainUrl}/city_backend.php?action=city_change&city={Cities[cityName]}&city_change_key={_cityChangeKey}")
+        };
+        msg.Headers.AddOrReplace("Referer", CityUrl.OriginalString);
 
+        var resp = await _client.SendAsync(msg);
+
+        if (resp.Headers.GetValues("Location").FirstOrDefault() is string value)
+        {
+            _cityRoute = value;
+            _cityName = cityName;
+        }
     }
 }
