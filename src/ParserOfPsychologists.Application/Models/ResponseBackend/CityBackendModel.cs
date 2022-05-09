@@ -1,4 +1,4 @@
-﻿namespace ParserOfPsychologists.Application.Models.Deserializable;
+﻿namespace ParserOfPsychologists.Application.Models.ResponseBackend;
 
 public class CityBackendModel
 {

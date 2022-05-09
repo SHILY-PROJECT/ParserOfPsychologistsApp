@@ -1,19 +1,19 @@
 ﻿namespace ParserOfPsychologists.Application.Parser;
 
-public class PageHandler
+public class PageNavigator
 {
     private readonly IStateOfCityModule _city;
     private readonly IParserSettings _settings;
     public int _currentPageNumber;
 
-    public PageHandler(IParserSettings settings, IStateOfCityModule city)
+    public PageNavigator(IParserSettings settings, IStateOfCityModule city)
     {
         _settings = settings;
         _city = city;
         this.SetData();
     }
 
-    public Uri CurrentPage { get => new($"{_city.Url.OriginalString}?page={_currentPageNumber}"); }
+    public Uri CurrentPage { get => new($"{_city.CityUrl.OriginalString}?page={_currentPageNumber}"); }
     public Uri PrevPage { get; private set; } = null!;
 
     public bool MoveNextOnPage()
@@ -32,6 +32,6 @@ public class PageHandler
     private void SetData()
     {
         _currentPageNumber = 0;
-        PrevPage = new(_city.Url.OriginalString);
+        PrevPage = new(_city.CityUrl.OriginalString);
     }
 }

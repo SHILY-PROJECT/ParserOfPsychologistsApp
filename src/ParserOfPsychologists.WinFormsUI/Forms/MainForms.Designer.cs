@@ -17,27 +17,31 @@ partial class MainForms
     {
             this.citiesBox = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // comboBox1
+            // citiesBox
             // 
             this.citiesBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.citiesBox.FormattingEnabled = true;
             this.citiesBox.Location = new System.Drawing.Point(6, 37);
-            this.citiesBox.Name = "comboBox1";
+            this.citiesBox.Name = "citiesBox";
             this.citiesBox.Size = new System.Drawing.Size(256, 23);
             this.citiesBox.TabIndex = 0;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboBox1);
             this.groupBox1.Controls.Add(this.comboBox2);
+            this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.button1);
@@ -49,6 +53,18 @@ partial class MainForms
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Поиск";
             // 
+            // comboBox1
+            // 
+            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(152, 81);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(110, 23);
+            this.comboBox1.TabIndex = 3;
+            // 
             // comboBox2
             // 
             this.comboBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -58,7 +74,7 @@ partial class MainForms
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Location = new System.Drawing.Point(6, 81);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(256, 23);
+            this.comboBox2.Size = new System.Drawing.Size(110, 23);
             this.comboBox2.TabIndex = 3;
             // 
             // label2
@@ -66,9 +82,9 @@ partial class MainForms
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(6, 63);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(167, 15);
+            this.label2.Size = new System.Drawing.Size(188, 15);
             this.label2.TabIndex = 2;
-            this.label2.Text = "Количество страниц парсить";
+            this.label2.Text = "Номера страниц парсить (с - по)";
             // 
             // label1
             // 
@@ -89,6 +105,15 @@ partial class MainForms
             this.button1.TabIndex = 1;
             this.button1.Text = "Парсить";
             this.button1.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(126, 84);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(19, 15);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "—";
             // 
             // MainForms
             // 
@@ -112,4 +137,6 @@ partial class MainForms
     private ComboBox comboBox2;
     private Label label2;
     private Label label1;
+    private ComboBox comboBox1;
+    private Label label5;
 }

@@ -3,9 +3,9 @@
 public class MainParser : IParser
 {
     private readonly HttpClient _client;
-    private readonly PageHandler _page;
+    private readonly PageNavigator _page;
 
-    public MainParser(HttpClient client, PageHandler page)
+    public MainParser(HttpClient client, PageNavigator page)
     {
         _client = client;
         _page = page;
@@ -28,12 +28,7 @@ public class MainParser : IParser
         var xPathUserUrl = "//div[contains(@id, 'items_list_main')]/descendant::a[contains(@name, 'spec') and @href!='']";
 
         var msg = new HttpRequestMessage(HttpMethod.Get, _page.CurrentPage);
-        msg.Headers.AddRange(new Dictionary<string, string>
-        {
-            { "Connection", "keep-alive" },
-            { "Referer", _page.PrevPage.OriginalString }
-        },
-        true);
+        msg.Headers.AddOrReplace("Referer", _page.PrevPage.OriginalString, true);
 
         doc.LoadHtml(await _client.HttpRequestAsync(msg));
 
@@ -52,12 +47,7 @@ public class MainParser : IParser
         var xPathSpecialtyAndCity = "//div[contains(@class, 'status')]/descendant::a[@href!='' and text()!='']";
 
         var msg = new HttpRequestMessage(HttpMethod.Get, userUrl);
-        msg.Headers.AddRange(new Dictionary<string, string>
-        {
-            { "Connection", "keep-alive" },
-            { "Referer", _page.CurrentPage.OriginalString }
-        },
-        true);
+        msg.Headers.AddOrReplace("Referer", _page.CurrentPage.OriginalString, true);
 
         doc.LoadHtml(_client.HttpRequestAsync(msg).Result);
 
@@ -86,7 +76,6 @@ public class MainParser : IParser
         };
         msg.Headers.AddRange(new Dictionary<string, string>
         {
-            { "Connection", "keep-alive" },
             { "Referer", userLink.OriginalString },
             { "X-Requested-With", "XMLHttpRequest" }
         },
