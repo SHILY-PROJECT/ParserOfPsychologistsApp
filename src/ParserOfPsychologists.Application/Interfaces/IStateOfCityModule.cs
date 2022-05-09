@@ -2,13 +2,11 @@
 
 public interface IStateOfCityModule
 {
-    string CityId { get; }
-    string CityName { get; }
-    string LocationRoute { get; }
-    Uri Url { get; }
+    Uri CityUrl { get; }
     Dictionary<string, string> Cities { get; }
     Dictionary<string, string> DefaultCities { get; }
 
     bool IsChanged(string cityName);
     Task<IEnumerable<string>> FindCityAsync(string cityName);
+    Task ChangeCityAsync(string cityName);
 }

@@ -13,10 +13,12 @@ public class AccountManager : IAccountManager
 
     public AccountData CurrentAccount { get => _account; }
 
-    public async Task ConnectAnAccountAsync()
+    public async Task<bool> ConnectAnAccountAsync()
     {
         await LoadAccountProfileAsync();
         await _authorizationModule.SignInAsync(CurrentAccount);
+
+        return true;
     }
 
     public Task<bool> LoadAccountProfileAsync()
