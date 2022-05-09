@@ -7,9 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserOfPsychologists.WinFo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E3152C26-0591-49EE-84B8-147EE4AA3247}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserOfPsychologists.ConsoleUI", "src\ParserOfPsychologists.ConsoleUI\ParserOfPsychologists.ConsoleUI.csproj", "{48A2C9BB-88C1-408A-A47D-D91D80F3019B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserOfPsychologists.Application", "src\ParserOfPsychologists.Application\ParserOfPsychologists.Application.csproj", "{373362E1-C3E2-4FF6-B035-4E786430EEA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserOfPsychologists.Application", "src\ParserOfPsychologists.Application\ParserOfPsychologists.Application.csproj", "{373362E1-C3E2-4FF6-B035-4E786430EEA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +19,6 @@ Global
 		{A88273F4-1EC2-4E51-9C0C-1632FE1550BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A88273F4-1EC2-4E51-9C0C-1632FE1550BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A88273F4-1EC2-4E51-9C0C-1632FE1550BF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{48A2C9BB-88C1-408A-A47D-D91D80F3019B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48A2C9BB-88C1-408A-A47D-D91D80F3019B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{48A2C9BB-88C1-408A-A47D-D91D80F3019B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48A2C9BB-88C1-408A-A47D-D91D80F3019B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{373362E1-C3E2-4FF6-B035-4E786430EEA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{373362E1-C3E2-4FF6-B035-4E786430EEA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{373362E1-C3E2-4FF6-B035-4E786430EEA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -35,7 +29,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A88273F4-1EC2-4E51-9C0C-1632FE1550BF} = {E3152C26-0591-49EE-84B8-147EE4AA3247}
-		{48A2C9BB-88C1-408A-A47D-D91D80F3019B} = {E3152C26-0591-49EE-84B8-147EE4AA3247}
 		{373362E1-C3E2-4FF6-B035-4E786430EEA0} = {E3152C26-0591-49EE-84B8-147EE4AA3247}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
