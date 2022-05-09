@@ -42,4 +42,10 @@ public static class HttpHelper
         using var streamReader = new StreamReader(await resp.Content.ReadAsStreamAsync(), Encoding.GetEncoding("windows-1251"));
         return await streamReader.ReadToEndAsync();
     }
+
+    public static async Task<string> ExtractAsString(this HttpContent content)
+    {
+        using var streamReader = new StreamReader(await content.ReadAsStreamAsync(), Encoding.GetEncoding("windows-1251"));
+        return await streamReader.ReadToEndAsync();
+    }
 }
