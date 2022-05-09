@@ -1,4 +1,4 @@
-namespace ParserOfPsychologists.WinFormsUI;
+﻿namespace ParserOfPsychologists.WinFormsUI;
 
 public partial class MainForms : Form
 {
@@ -9,6 +9,8 @@ public partial class MainForms : Form
     {
         _facade = facade;
         _stateOfCity = stateOfCityModule;
+
+        _stateOfCity.CityChanged += OnCityChanged;
 
         InitializeComponent();
         RegisterFormEvents();
@@ -32,5 +34,14 @@ public partial class MainForms : Form
         {
             if (s is ComboBox box && _stateOfCity.IsChanged(box.Text)) await _stateOfCity.ChangeCityAsync(box.Text);
         };
+    }
+
+    private void OnCityChanged(object obj, StateOfCityEventArgs args)
+    {
+        this.parsePageFromBox.Items.AddRange(Enumerable.Range(1, args.PagesAvailable).Select(x => $"с {x}").ToArray());
+        this.parsePageToBox.Items.AddRange(Enumerable.Range(1, args.PagesAvailable).Select(x => $"по {x}").ToArray());
+
+        this.parsePageFromBox.SelectedIndex = 0;
+        this.parsePageToBox.SelectedIndex = this.parsePageFromBox.Items.Count - 1;
     }
 }
