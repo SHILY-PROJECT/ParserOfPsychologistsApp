@@ -4,6 +4,7 @@ public interface IStateOfCityModule
 {
     public event EventHandler<StateOfCityEventArgs>? CityChanged;
 
+    int NumberOfPagesAvailable { get; }
     Uri CityUrl { get; }
     Dictionary<string, string> Cities { get; }
     Dictionary<string, string> DefaultCities { get; }

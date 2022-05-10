@@ -4,22 +4,23 @@ public class StateOfCityModule : IStateOfCityModule
 {
     private readonly string _mainUrl = "https://www.b17.ru";
 
+    private readonly HttpClient _client;
+
     private string _cityName = string.Empty;
     private string _cityRoute = string.Empty;
     private string _cityChangeKey = string.Empty;
 
-    private readonly HttpClient _client;
+    public event EventHandler<StateOfCityEventArgs>? CityChanged;
 
     public StateOfCityModule(HttpClient client)
     {
         _client = client;
     }
 
+    public int NumberOfPagesAvailable { get; private set; }
     public Uri CityUrl { get => new($"{_mainUrl}{_cityRoute}"); }
     public Dictionary<string, string> DefaultCities { get; } = new();
     public Dictionary<string, string> Cities { get; } = new();
-
-    public event EventHandler<StateOfCityEventArgs>? CityChanged;
 
     public bool IsChanged(string cityName) =>
         !string.IsNullOrWhiteSpace(cityName) && !_cityName.Equals(cityName, StringComparison.OrdinalIgnoreCase);
@@ -67,8 +68,8 @@ public class StateOfCityModule : IStateOfCityModule
         {
             _cityRoute = value;
             _cityName = cityName;
-
-            this.OnCityChanged(new(await this.GetAvailablePages(referer)));
+            NumberOfPagesAvailable = await this.GetAvailablePages(referer);
+            this.OnCityChanged(new StateOfCityEventArgs(NumberOfPagesAvailable));
         }
     }
 
