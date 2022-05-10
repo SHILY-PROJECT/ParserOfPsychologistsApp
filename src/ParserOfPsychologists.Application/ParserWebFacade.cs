@@ -3,10 +3,10 @@
 public class ParserWebFacade : IParserWebRequestsFacade
 {
     private readonly IParser _parser;
-    private readonly IStateOfCityModule _cityModule;
+    private readonly ICityHandlerModule _cityModule;
     private readonly IAccountManager _accountManager;
 
-    public ParserWebFacade(IParser parser, IStateOfCityModule cityModule, IAccountManager accountManager)
+    public ParserWebFacade(IParser parser, ICityHandlerModule cityModule, IAccountManager accountManager)
     {
         _parser = parser;
         _cityModule = cityModule;

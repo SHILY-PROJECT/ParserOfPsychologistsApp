@@ -1,6 +1,6 @@
 ﻿namespace ParserOfPsychologists.Application.Parser;
 
-public class StateOfCityModule : IStateOfCityModule
+public class CityHandlerModule : ICityHandlerModule
 {
     private readonly string _mainUrl = "https://www.b17.ru";
 
@@ -12,7 +12,7 @@ public class StateOfCityModule : IStateOfCityModule
 
     public event EventHandler<StateOfCityEventArgs>? CityChanged;
 
-    public StateOfCityModule(HttpClient client)
+    public CityHandlerModule(HttpClient client)
     {
         _client = client;
     }
@@ -68,6 +68,7 @@ public class StateOfCityModule : IStateOfCityModule
         {
             _cityRoute = value;
             _cityName = cityName;
+
             NumberOfPagesAvailable = await this.GetAvailablePages(referer);
             this.OnCityChanged(new StateOfCityEventArgs(NumberOfPagesAvailable));
         }
@@ -81,14 +82,11 @@ public class StateOfCityModule : IStateOfCityModule
 
         var xPathLastPage = "//div[contains(@id, 'page_list')]/descendant::a[last()]";
 
-        var msg = new HttpRequestMessage
-        {
-            Method = HttpMethod.Get,
-            RequestUri = CityUrl
-        };
+        var msg = new HttpRequestMessage(HttpMethod.Get, CityUrl);
         msg.Headers.AddOrReplace("Referer", referer);
 
-        doc.LoadHtml(await _client.HttpRequestAsync(msg));
+        var resp = await _client.HttpRequestAsync(msg);
+        doc.LoadHtml(resp);
 
         return Convert.ToInt32(doc.DocumentNode.SelectSingleNode(xPathLastPage).InnerText);
     }

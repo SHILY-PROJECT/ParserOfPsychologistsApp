@@ -1,6 +1,6 @@
 ﻿namespace ParserOfPsychologists.Application.Interfaces;
 
-public interface IStateOfCityModule
+public interface ICityHandlerModule
 {
     public event EventHandler<StateOfCityEventArgs>? CityChanged;
 

@@ -2,11 +2,11 @@
 
 public class PageNavigator
 {
-    private readonly IStateOfCityModule _city;
+    private readonly ICityHandlerModule _city;
     private readonly IParserSettings _settings;
     public int _currentPageNumber;
 
-    public PageNavigator(IParserSettings settings, IStateOfCityModule city)
+    public PageNavigator(IParserSettings settings, ICityHandlerModule city)
     {
         _settings = settings;
         _city = city;

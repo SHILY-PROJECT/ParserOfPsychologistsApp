@@ -5,10 +5,10 @@ public partial class MainForms : Form
     private readonly string _fromLineStartsWith = "с";
     private readonly string _toLineStartsWith = "по";
 
-    private readonly IStateOfCityModule _stateOfCity;
+    private readonly ICityHandlerModule _stateOfCity;
     private readonly IParserWebRequestsFacade _facade;
 
-    public MainForms(IParserWebRequestsFacade facade, IStateOfCityModule stateOfCityModule)
+    public MainForms(IParserWebRequestsFacade facade, ICityHandlerModule stateOfCityModule)
     {
         _facade = facade;
         _stateOfCity = stateOfCityModule;

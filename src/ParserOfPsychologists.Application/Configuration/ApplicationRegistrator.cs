@@ -7,7 +7,7 @@ public static class ApplicationRegistrator
         var cfg = HttpClientConfiguration.CreateConfiguration();
 
         services
-            .AddScoped<IStateOfCityModule, StateOfCityModule>()
+            .AddScoped<ICityHandlerModule, CityHandlerModule>()
             .AddScoped<IParser, MainParser>()
             .AddScoped<IParserSettings, ParserSettings>()
             .AddScoped<IParserWebRequestsFacade, ParserWebFacade>()
