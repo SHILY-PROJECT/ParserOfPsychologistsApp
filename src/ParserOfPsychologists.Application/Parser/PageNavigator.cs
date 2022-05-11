@@ -2,36 +2,38 @@
 
 public class PageNavigator
 {
-    private readonly ICityHandlerModule _city;
-    private readonly IParserSettings _settings;
+    private readonly IParserSettings _parserSettings;
+    private readonly ICityHandlerModule _cityHandler;
+
     public int _currentPageNumber;
 
-    public PageNavigator(IParserSettings settings, ICityHandlerModule city)
+    public PageNavigator(IParserSettings parserSettings, ICityHandlerModule cityHandler)
     {
-        _settings = settings;
-        _city = city;
-        this.SetData();
+        _parserSettings = parserSettings;
+        _cityHandler = cityHandler;
+        _parserSettings.SettingsChanged += OnConfigure;
     }
 
-    public Uri CurrentPage { get => new($"{_city.CityUrl.OriginalString}?page={_currentPageNumber}"); }
+    public Uri CurrentPage { get => new($"{_cityHandler.CityUrl.OriginalString}?page={_currentPageNumber}"); }
     public Uri PrevPage { get; private set; } = null!;
 
     public bool MoveNextOnPage()
     {
-        if (_currentPageNumber >= _settings.NumberOfPagesToParse) return false;
+        if (_currentPageNumber > _parserSettings.PageTo) return false;
 
-        if (_currentPageNumber > 0)
+        if (_currentPageNumber > _parserSettings.PageFrom)
             PrevPage = CurrentPage;
         _currentPageNumber++;
 
         return true;
     }
 
-    public void Reset() => this.SetData();
-
-    private void SetData()
+    private void OnConfigure(object? source, EventArgs args)
     {
-        _currentPageNumber = 0;
-        PrevPage = new(_city.CityUrl.OriginalString);
+        if (_currentPageNumber == _parserSettings.PageFrom &&
+            PrevPage != null && _cityHandler.CityUrl.OriginalString == PrevPage.OriginalString) return;
+
+        _currentPageNumber = _parserSettings.PageFrom;
+        PrevPage = new(_cityHandler.CityUrl.OriginalString);
     }
 }
