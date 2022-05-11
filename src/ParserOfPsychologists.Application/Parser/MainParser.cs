@@ -3,40 +3,43 @@
 public class MainParser : IParser
 {
     private readonly IParserSettings _parserSetting;
-    private readonly PageNavigator _page;
+    private readonly PageNavigator _pageNavigator;
     private readonly HttpClient _client;
 
     public MainParser(IParserSettings parserSetting, PageNavigator pageNavigator, HttpClient client)
     {
         _parserSetting = parserSetting;
-        _page = pageNavigator;
+        _pageNavigator = pageNavigator;
         _client = client;
     }
 
-    public async Task<IEnumerable<UserData>> ParseUsersByCityAsync()
+    public async Task<IEnumerable<UserData>> ParseUsersByCityAsync() =>
+        await Task.Run(() => ParseUsersByCity());
+
+    public IEnumerable<UserData> ParseUsersByCity()
     {
         var users = new List<UserData>();
 
-        while (_page.MoveNextOnPage())
-            users.AddRange((await this.ParseUsersFromPage()).Select(uu => this.ParseInfoAboutUser(uu)));       
+        while (_pageNavigator.MoveNextOnPage())
+            users.AddRange(this.ParseUsersFromPage().Select(uu => this.ParseInfoAboutUser(uu)));       
 
         return users.ToList();
     }
 
-    private async Task<IEnumerable<Uri>> ParseUsersFromPage()
+    private IEnumerable<Uri> ParseUsersFromPage()
     {
         var doc = new HtmlDocument();
 
         var xPathUserUrl = "//div[contains(@id, 'items_list_main')]/descendant::a[contains(@name, 'spec') and @href!='']";
 
-        var msg = new HttpRequestMessage(HttpMethod.Get, _page.CurrentPage);
-        msg.Headers.AddOrReplace("Referer", _page.PrevPage.OriginalString, true);
+        var msg = new HttpRequestMessage(HttpMethod.Get, _pageNavigator.CurrentPage);
+        msg.Headers.AddOrReplace("Referer", _pageNavigator.PrevPage.OriginalString, true);
 
-        doc.LoadHtml(await _client.HttpRequestAsync(msg));
+        doc.LoadHtml(_client.HttpRequest(msg));
 
         var usersUrls = doc.DocumentNode
             .SelectNodes(xPathUserUrl)
-            .Select(hn => new Uri($"{_page.CurrentPage.Scheme}://{_page.CurrentPage.Host}{hn.GetAttributeValue("href", default(string))}"));
+            .Select(hn => new Uri($"{_pageNavigator.CurrentPage.Scheme}://{_pageNavigator.CurrentPage.Host}{hn.GetAttributeValue("href", default(string))}"));
 
         Thread.Sleep(_parserSetting.TimeoutAfterRequestToOneNumberMainPageWithUsers);
 
@@ -51,11 +54,11 @@ public class MainParser : IParser
         var xPathSpecialtyAndCity = "//div[contains(@class, 'status')]/descendant::a[@href!='' and text()!='']";
 
         var msg = new HttpRequestMessage(HttpMethod.Get, userUrl);
-        msg.Headers.AddOrReplace("Referer", _page.CurrentPage.OriginalString, true);
+        msg.Headers.AddOrReplace("Referer", _pageNavigator.CurrentPage.OriginalString, true);
 
-        doc.LoadHtml(_client.HttpRequestAsync(msg).Result);
+        doc.LoadHtml(_client.HttpRequest(msg));
 
-        var user = new UserData(doc.DocumentNode.SelectSingleNode(xPathFullName).InnerText);
+        var user = new UserData(doc.DocumentNode.SelectSingleNode(xPathFullName).InnerText, userUrl);
         user.ExtractSpecialtyAndCity(doc.DocumentNode.SelectSingleNode(xPathSpecialtyAndCity).InnerText);
         var contactsId = Regex.Match(doc.Text, @"(?<='spec_id_new_ppp',').*?(?=')").Value;
 
@@ -79,7 +82,7 @@ public class MainParser : IParser
         var msg = new HttpRequestMessage
         {
             Method = HttpMethod.Get,
-            RequestUri = new Uri($"{_page.CurrentPage.Scheme}://{_page.CurrentPage.Host}/telefon_backend.php?mod=spec_id_new&id={contactsId}")
+            RequestUri = new Uri($"{_pageNavigator.CurrentPage.Scheme}://{_pageNavigator.CurrentPage.Host}/telefon_backend.php?mod=spec_id_new&id={contactsId}")
         };
         msg.Headers.AddRange(new Dictionary<string, string>
         {
@@ -88,7 +91,7 @@ public class MainParser : IParser
         },
         true);
 
-        var resp = _client.HttpRequestAsync(msg).Result;
+        var resp = _client.HttpRequest(msg);
         var contactsFromBackend = JsonSerializer.Deserialize<ContactsBackendModel>(resp) ?? new();
 
         doc.LoadHtml(contactsFromBackend.HtmlWithKontaktOne);
@@ -99,7 +102,7 @@ public class MainParser : IParser
 
         var contacts = new UserContactsData
         {
-            Phone = doc.DocumentNode.SelectSingleNode(xPathPhone).InnerHtml,
+            Phone = doc.DocumentNode?.SelectSingleNode(xPathPhone)?.InnerHtml ?? string.Empty,
             TelegramAvailable = messengersUnderPhone.Any(m => m.Contains("Telegram", StringComparison.OrdinalIgnoreCase)),
             WhatsAppAvailable = messengersUnderPhone.Any(m => m.Contains("WhatsApp", StringComparison.OrdinalIgnoreCase)),
             ViberAvailable = messengersUnderPhone.Any(m => m.Contains("Viber", StringComparison.OrdinalIgnoreCase)),
@@ -112,6 +115,7 @@ public class MainParser : IParser
         };
 
         Thread.Sleep(_parserSetting.TimeoutAfterRequestToOneUserPage);
+
         return contacts;
     }
 
