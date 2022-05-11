@@ -57,30 +57,26 @@ public partial class MainForms : Form
             }
         };
 
-        this.startParsing.Click += async (s, e) =>
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(this.citiesBox.Text))
-                    throw new InvalidOperationException("Select cities from the list.");
-
-                _parserSettings.SetTimeouts(this.timeoutsBox.Text);
-                _parserSettings.ToParsePagesTo = PageNumberOf(this.parsePageToBox.Text);
-                _parserSettings.ToParsePagesFrom = PageNumberOf(this.parsePageFromBox.Text);
-
-                await Parse();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ooops...", MessageBoxButtons.OK);
-            }
-        };
+        this.startParsing.Click += async (s, e) => await this.ParseUsersByCityAsync();
     }
 
-    private async Task Parse()
+    private async Task ParseUsersByCityAsync()
     {
-        var users = await _facade.ParseUsersByCityAsync();
+        try
+        {
+            if (string.IsNullOrWhiteSpace(this.citiesBox.Text))
+                throw new InvalidOperationException("Select cities from the list.");
 
+            _parserSettings.SetTimeouts(this.timeoutsBox.Text);
+            _parserSettings.PageTo = PageNumberOf(this.parsePageToBox.Text);
+            _parserSettings.PageFrom = PageNumberOf(this.parsePageFromBox.Text);
+
+            await _facade.ParseUsersByCityAsync();
+        }
+        catch (Exception ex)
+        {
+            ShowMessageBox(ex);
+        }
     }
 
     private void OnCityChanged(object? obj, CityHandlerModuleEventArgs args)
@@ -114,4 +110,7 @@ public partial class MainForms : Form
 
         return Enumerable.Range(pageNumberingStartsWith, pagesAvailable).Select(x => $"{lineStartsWith} {x}").ToArray();
     }
+
+    private void ShowMessageBox(Exception ex) =>
+        MessageBox.Show(ex.Message, "Ooops...", MessageBoxButtons.OK);  
 }
