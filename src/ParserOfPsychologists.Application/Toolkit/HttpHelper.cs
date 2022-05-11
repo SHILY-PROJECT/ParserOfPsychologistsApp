@@ -43,9 +43,22 @@ public static class HttpHelper
         return await streamReader.ReadToEndAsync();
     }
 
-    public static async Task<string> ExtractAsString(this HttpContent content)
+    public static string HttpRequest(this HttpClient client, HttpRequestMessage httpRequest)
+    {
+        var resp = client.Send(httpRequest);
+        using var streamReader = new StreamReader(resp.Content.ReadAsStream(), Encoding.GetEncoding("windows-1251"));
+        return streamReader.ReadToEnd();
+    }
+
+    public static async Task<string> ExtractAsStringAsync(this HttpContent content)
     {
         using var streamReader = new StreamReader(await content.ReadAsStreamAsync(), Encoding.GetEncoding("windows-1251"));
         return await streamReader.ReadToEndAsync();
+    }
+
+    public static string ExtractAsString(this HttpContent content)
+    {
+        using var streamReader = new StreamReader(content.ReadAsStream(), Encoding.GetEncoding("windows-1251"));
+        return streamReader.ReadToEnd();
     }
 }
