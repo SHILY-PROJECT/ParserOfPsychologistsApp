@@ -19,10 +19,10 @@ public class PageNavigator
 
     public bool MoveNextOnPage()
     {
-        if (_currentPageNumber > _parserSettings.PageTo) return false;
+        if (_currentPageNumber >= _parserSettings.PageTo) return false;
 
-        if (_currentPageNumber > _parserSettings.PageFrom)
-            PrevPage = CurrentPage;
+        if (_currentPageNumber > (_parserSettings.PageFrom - 1) ||
+            _parserSettings.PageFrom > 1) PrevPage = CurrentPage;
         _currentPageNumber++;
 
         return true;
@@ -30,10 +30,10 @@ public class PageNavigator
 
     private void OnConfigure(object? source, EventArgs args)
     {
-        if (_currentPageNumber == _parserSettings.PageFrom &&
+        if (_currentPageNumber == (_parserSettings.PageFrom - 1) &&
             PrevPage != null && _cityHandler.CityUrl.OriginalString == PrevPage.OriginalString) return;
 
-        _currentPageNumber = _parserSettings.PageFrom;
+        _currentPageNumber = (_parserSettings.PageFrom - 1);
         PrevPage = new(_cityHandler.CityUrl.OriginalString);
     }
 }
