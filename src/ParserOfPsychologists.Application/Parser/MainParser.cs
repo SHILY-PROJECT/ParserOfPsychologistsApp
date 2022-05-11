@@ -2,13 +2,15 @@
 
 public class MainParser : IParser
 {
-    private readonly HttpClient _client;
+    private readonly IParserSettings _parserSetting;
     private readonly PageNavigator _page;
+    private readonly HttpClient _client;
 
-    public MainParser(HttpClient client, PageNavigator page)
+    public MainParser(IParserSettings parserSetting, PageNavigator pageNavigator, HttpClient client)
     {
+        _parserSetting = parserSetting;
+        _page = pageNavigator;
         _client = client;
-        _page = page;
     }
 
     public async Task<IEnumerable<UserData>> ParseUsersByCityAsync()
@@ -16,7 +18,7 @@ public class MainParser : IParser
         var users = new List<UserData>();
 
         while (_page.MoveNextOnPage())
-            users.AddRange((await ParseUsersFromPage()).Select(uu => ParseInfoAboutUser(uu)));
+            users.AddRange((await this.ParseUsersFromPage()).Select(uu => this.ParseInfoAboutUser(uu)));       
 
         return users.ToList();
     }
@@ -32,11 +34,13 @@ public class MainParser : IParser
 
         doc.LoadHtml(await _client.HttpRequestAsync(msg));
 
-        var pages = doc.DocumentNode
+        var usersUrls = doc.DocumentNode
             .SelectNodes(xPathUserUrl)
             .Select(hn => new Uri($"{_page.CurrentPage.Scheme}://{_page.CurrentPage.Host}{hn.GetAttributeValue("href", default(string))}"));
 
-        return pages;
+        Thread.Sleep(_parserSetting.TimeoutAfterRequestToOneNumberMainPageWithUsers);
+
+        return usersUrls;
     }
 
     private UserData ParseInfoAboutUser(Uri userUrl)
@@ -53,8 +57,11 @@ public class MainParser : IParser
 
         var user = new UserData(doc.DocumentNode.SelectSingleNode(xPathFullName).InnerText);
         user.ExtractSpecialtyAndCity(doc.DocumentNode.SelectSingleNode(xPathSpecialtyAndCity).InnerText);
+        var contactsId = Regex.Match(doc.Text, @"(?<='spec_id_new_ppp',').*?(?=')").Value;
 
-        return user with { Contacts = ParseUserСontacts(userUrl, Regex.Match(doc.Text, @"(?<='spec_id_new_ppp',').*?(?=')").Value) };
+        Thread.Sleep(_parserSetting.TimeoutAfterRequestToOneUserPage);
+
+        return user with { Contacts = this.ParseUserСontacts(userUrl, contactsId) };
     }
 
     private UserContactsData? ParseUserСontacts(Uri userLink, string contactsId)
@@ -90,7 +97,7 @@ public class MainParser : IParser
             .SelectNodes(xPathMessengersUnderPhone)
             ?.Select(x => x.InnerText) ?? Array.Empty<string>();
 
-        return new UserContactsData
+        var contacts = new UserContactsData
         {
             Phone = doc.DocumentNode.SelectSingleNode(xPathPhone).InnerHtml,
             TelegramAvailable = messengersUnderPhone.Any(m => m.Contains("Telegram", StringComparison.OrdinalIgnoreCase)),
@@ -103,6 +110,9 @@ public class MainParser : IParser
             SkypeNickname = ExtractHref(doc, "//a[contains(@href, 'Skype')]"),
             SiteUrl = ExtractHref(doc, "//a[contains(@href, 'http') and not(.//span)]")
         };
+
+        Thread.Sleep(_parserSetting.TimeoutAfterRequestToOneUserPage);
+        return contacts;
     }
 
     private static string ExtractHref(HtmlDocument doc, string xPath) =>
