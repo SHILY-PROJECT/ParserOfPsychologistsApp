@@ -5,10 +5,10 @@ public partial class MainForms : Form
     private readonly string _fromLineStartsWith = "с";
     private readonly string _toLineStartsWith = "по";
 
-    private readonly IParserWebRequestsFacade _facade;
+    private readonly IApplicationFacade _facade;
     private readonly IParserSettings _parserSettings;
 
-    public MainForms(IParserWebRequestsFacade facade, IParserSettings parserSettings)
+    public MainForms(IApplicationFacade facade, IParserSettings parserSettings)
     {
         _facade = facade;
         _parserSettings = parserSettings;

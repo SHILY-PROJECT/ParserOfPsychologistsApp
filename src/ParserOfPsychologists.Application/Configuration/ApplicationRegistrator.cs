@@ -10,7 +10,7 @@ public static class ApplicationRegistrator
             .AddScoped<ICityHandlerModule, CityHandlerModule>()
             .AddScoped<IParser, MainParser>()
             .AddScoped<IParserSettings, ParserSettings>()
-            .AddScoped<IParserWebRequestsFacade, ParserWebFacade>()
+            .AddScoped<IApplicationFacade, ApplicationFacade>()
             .AddScoped<IHttpClientConfiguration, HttpClientConfiguration>(opt => cfg)
             .AddScoped<IAccountManager, AccountManager>()
             .AddScoped<AccountData>()
