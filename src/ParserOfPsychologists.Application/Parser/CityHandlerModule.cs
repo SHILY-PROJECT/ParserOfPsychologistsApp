@@ -10,14 +10,14 @@ public class CityHandlerModule : ICityHandlerModule
     private string _cityRoute = string.Empty;
     private string _cityChangeKey = string.Empty;
 
-    public event EventHandler<StateOfCityEventArgs>? CityChanged;
+    public event EventHandler<CityHandlerModuleEventArgs>? CityChanged;
 
     public CityHandlerModule(HttpClient client)
     {
         _client = client;
     }
 
-    public int NumberOfPagesAvailable { get; private set; }
+    public int NumberOfAvailablePagesForCurrentCity { get; private set; }
     public Uri CityUrl { get => new($"{_mainUrl}{_cityRoute}"); }
     public Dictionary<string, string> DefaultCities { get; } = new();
     public Dictionary<string, string> Cities { get; } = new();
@@ -29,8 +29,8 @@ public class CityHandlerModule : ICityHandlerModule
     {
         var doc = new HtmlDocument();
 
-        var xPathCityChangeKey = "//input[contains(@id, 'city_change_key')]";
         var xPathCity = "//div[@city!='' and text()!='']";
+        var xPathCityChangeKey = "//input[contains(@id, 'city_change_key')]";
 
         var msg = new HttpRequestMessage
         {
@@ -69,12 +69,12 @@ public class CityHandlerModule : ICityHandlerModule
             _cityRoute = value;
             _cityName = cityName;
 
-            NumberOfPagesAvailable = await this.GetAvailablePages(referer);
-            this.OnCityChanged(new StateOfCityEventArgs(NumberOfPagesAvailable));
+            NumberOfAvailablePagesForCurrentCity = await this.GetAvailablePages(referer);
+            this.OnCityChanged(new CityHandlerModuleEventArgs(NumberOfAvailablePagesForCurrentCity));
         }
     }
 
-    protected void OnCityChanged(StateOfCityEventArgs args) => CityChanged?.Invoke(this, args);
+    protected void OnCityChanged(CityHandlerModuleEventArgs args) => CityChanged?.Invoke(this, args);
 
     private async Task<int> GetAvailablePages(string referer)
     {

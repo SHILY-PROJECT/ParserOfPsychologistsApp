@@ -4,6 +4,9 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Company>SHILY PROJECT</Company>
+    <Authors>SHILY</Authors>
+    <Product>Parser Of Psychologists</Product>
   </PropertyGroup>
 
   <ItemGroup>
