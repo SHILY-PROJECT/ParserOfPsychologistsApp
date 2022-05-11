@@ -45,8 +45,14 @@ public class ApplicationFacade : IApplicationFacade
         return (await _cityHandler.FindCityAsync(cityName)).ToArray();
     }
 
-    public async Task<IReadOnlyCollection<UserData>> ParseUsersByCityAsync()
+    public async Task<bool> ParseUsersByCityAsync()
     {
-        return (await _parser.ParseUsersByCityAsync()).ToList();
+        var users = (await _parser.ParseUsersByCityAsync()).ToList();
+
+        /*
+         *  TODO: Add save users to file.
+         */
+
+        return true;
     }
 }

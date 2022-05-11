@@ -111,6 +111,6 @@ public partial class MainForms : Form
         return Enumerable.Range(pageNumberingStartsWith, pagesAvailable).Select(x => $"{lineStartsWith} {x}").ToArray();
     }
 
-    private void ShowMessageBox(Exception ex) =>
+    private static void ShowMessageBox(Exception ex) =>
         MessageBox.Show(ex.Message, "Ooops...", MessageBoxButtons.OK);  
 }

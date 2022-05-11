@@ -8,5 +8,5 @@ public interface IApplicationFacade
     Task ChangeCityAsync();
     Task<bool> ConnectAnAccountAsync();
     Task<IReadOnlyCollection<string>> FindCityAsync(string cityName);
-    Task<IReadOnlyCollection<UserData>> ParseUsersByCityAsync();
+    Task<bool> ParseUsersByCityAsync();
 }
