@@ -5,11 +5,13 @@ public partial class MainForms : Form
     private readonly string _fromLineStartsWith = "с";
     private readonly string _toLineStartsWith = "по";
 
+    private readonly IServiceProvider _services;
     private readonly IApplicationFacade _facade;
     private readonly IParserSettings _parserSettings;
 
-    public MainForms(IApplicationFacade facade, IParserSettings parserSettings)
+    public MainForms(IServiceProvider services, IApplicationFacade facade, IParserSettings parserSettings)
     {
+        _services = services;
         _facade = facade;
         _parserSettings = parserSettings;
 
@@ -32,6 +34,7 @@ public partial class MainForms : Form
             var cities = async () => (await _facade.FindCityAsync(string.Empty)).ToArray();
             this.citiesBox.Items.AddRange(await cities.Invoke());
         };
+        this.Load += (s, e) => ChangeControlAccess(false);
     }
 
     private void ActionOnEventsParser()
@@ -40,6 +43,7 @@ public partial class MainForms : Form
         {
             if (s is ComboBox box && _facade.CityHandler.IsChanged(_parserSettings.CityOnInput = box.Text))
             {
+                ChangeControlAccess(false);
                 await _facade.ChangeCityAsync();
             }
         };
@@ -57,11 +61,15 @@ public partial class MainForms : Form
             }
         };
 
-        this.startParsing.Click += async (s, e) => await this.ParseUsersByCityAsync();
+        this.startParsingButton.Click += async (s, e) => await this.ParseUsersByCityAsync();
+
+        this.openResultsButton.Click += (s, e) => _facade.OpenResultsFolder();
     }
 
     private async Task ParseUsersByCityAsync()
     {
+        using var waitForm = _services.GetRequiredService<WaitForm>();
+
         try
         {
             if (string.IsNullOrWhiteSpace(this.citiesBox.Text))
@@ -71,12 +79,28 @@ public partial class MainForms : Form
             _parserSettings.PageTo = PageNumberOf(this.parsePageToBox.Text);
             _parserSettings.PageFrom = PageNumberOf(this.parsePageFromBox.Text);
 
+            waitForm.Owner = this;
+            waitForm.ShowInTaskbar = false;
+            this.Enabled = false;
+
+            waitForm.Show();
             await _facade.ParseUsersByCityAsync();
         }
         catch (Exception ex)
         {
             ShowMessageBox(ex);
         }
+        finally
+        {
+            this.Enabled = true;
+        }
+    }
+
+    private void ChangeControlAccess(bool enableOrDisable)
+    {
+        this.startParsingButton.Enabled = enableOrDisable;
+        this.parsePageFromBox.Enabled = enableOrDisable;
+        this.parsePageToBox.Enabled = enableOrDisable;
     }
 
     private void OnCityChanged(object? obj, CityHandlerModuleEventArgs args)
@@ -92,6 +116,8 @@ public partial class MainForms : Form
 
             this.parsePageToBox.Text = this.parsePageToBox.Items[this.parsePageToBox.Items.Count - 1] as string;
             this.parsePageFromBox.Text = this.parsePageFromBox.Items[0] as string;
+
+            ChangeControlAccess(true);
         }
     }
 
