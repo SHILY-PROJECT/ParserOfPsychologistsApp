@@ -1,11 +1,11 @@
 ﻿namespace ParserOfPsychologists.Application.Parser;
 
-public class PageNavigator
+public class PageNavigator : IPageNavigator
 {
     private readonly IParserSettings _parserSettings;
     private readonly ICityHandlerModule _cityHandler;
 
-    public int _currentPageNumber;
+    private int _currentPageNumber;
 
     public PageNavigator(IParserSettings parserSettings, ICityHandlerModule cityHandler)
     {
