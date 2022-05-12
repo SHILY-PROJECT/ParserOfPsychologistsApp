@@ -22,6 +22,8 @@ public class ApplicationFacade : IApplicationFacade
     public IParserSettings ParserSettings { get => _parserSettings; }
     public ICityHandlerModule CityHandler { get => _cityHandler; }
 
+    public void OpenResultsFolder() => KeeperOfResult.OpenResultsFolder();
+
     public async Task<bool> ConnectAnAccountAsync()
     {
         try
@@ -48,11 +50,7 @@ public class ApplicationFacade : IApplicationFacade
     public async Task<bool> ParseUsersByCityAsync()
     {
         var users = (await _parser.ParseUsersByCityAsync()).ToList();
-
-        /*
-         *  TODO: Add save users to file.
-         */
-
+        if (users.Any()) await KeeperOfResult.SaveToFileAsync(users);
         return true;
     }
 }
