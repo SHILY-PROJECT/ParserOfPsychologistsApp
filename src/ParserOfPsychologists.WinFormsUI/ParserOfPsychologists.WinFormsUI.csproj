@@ -11,6 +11,13 @@
     <Company>SHILY PROJECT</Company>
     <Product>Parser Of Psychologists</Product>
     <Version>0.7.5</Version>
+
+	<AssemblyName>ParserOfPsychologists</AssemblyName>
+	<PublishSingleFile>true</PublishSingleFile>
+	<SelfContained>true</SelfContained>
+	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	<PublishReadyToRun>true</PublishReadyToRun>
+	
   </PropertyGroup>
 
   <ItemGroup>

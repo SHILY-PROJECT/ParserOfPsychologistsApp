@@ -9,4 +9,6 @@ public interface IApplicationFacade
     Task<bool> ConnectAnAccountAsync();
     Task<IReadOnlyCollection<string>> FindCityAsync(string cityName);
     Task<bool> ParseUsersByCityAsync();
+
+    void OpenResultsFolder();
 }

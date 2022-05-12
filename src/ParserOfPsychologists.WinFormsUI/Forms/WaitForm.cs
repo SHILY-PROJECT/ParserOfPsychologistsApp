@@ -33,7 +33,7 @@ internal partial class WaitForm : Form
     private void OnStateOfProgressChanged(object? source, StateOfProgressEventArgs args) => this.Invoke(() =>
     {
         this.pageLabel.Text = $"{LabelPrefixOf(pageLabel)}{args.NumberOfPagesProcessed} из {_parserSettings.PageTo - _parserSettings.PageFrom + 1}";
-        this.usersLabel.Text = $"{LabelPrefixOf(pageLabel)}{args.NumberOfUsersProcessed}";
+        this.usersLabel.Text = $"{LabelPrefixOf(usersLabel)}{args.NumberOfUsersProcessed}";
     });
 
     private static string? LabelPrefixOf(Label label) => label.Text.Split(':').FirstOrDefault() + ": ";
