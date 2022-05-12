@@ -20,9 +20,9 @@ partial class MainForms
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.parsePageToBox = new System.Windows.Forms.ComboBox();
             this.parsePageFromBox = new System.Windows.Forms.ComboBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.openResultsButton = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
-            this.startParsing = new System.Windows.Forms.Button();
+            this.startParsingButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.timeoutsBox = new System.Windows.Forms.MaskedTextBox();
@@ -52,9 +52,9 @@ partial class MainForms
             // 
             this.groupBox1.Controls.Add(this.parsePageToBox);
             this.groupBox1.Controls.Add(this.parsePageFromBox);
-            this.groupBox1.Controls.Add(this.button2);
+            this.groupBox1.Controls.Add(this.openResultsButton);
             this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.startParsing);
+            this.groupBox1.Controls.Add(this.startParsingButton);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.citiesBox);
@@ -91,17 +91,17 @@ partial class MainForms
             this.parsePageFromBox.Size = new System.Drawing.Size(110, 23);
             this.parsePageFromBox.TabIndex = 3;
             // 
-            // button2
+            // openResultsButton
             // 
-            this.button2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button2.BackgroundImage")));
-            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button2.ForeColor = System.Drawing.Color.Black;
-            this.button2.Location = new System.Drawing.Point(220, 141);
-            this.button2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(45, 41);
-            this.button2.TabIndex = 1;
-            this.button2.UseVisualStyleBackColor = true;
+            this.openResultsButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("openResultsButton.BackgroundImage")));
+            this.openResultsButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.openResultsButton.ForeColor = System.Drawing.Color.Black;
+            this.openResultsButton.Location = new System.Drawing.Point(220, 141);
+            this.openResultsButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.openResultsButton.Name = "openResultsButton";
+            this.openResultsButton.Size = new System.Drawing.Size(45, 41);
+            this.openResultsButton.TabIndex = 1;
+            this.openResultsButton.UseVisualStyleBackColor = true;
             // 
             // label5
             // 
@@ -114,17 +114,17 @@ partial class MainForms
             this.label5.TabIndex = 2;
             this.label5.Text = "—";
             // 
-            // button1
+            // startParsing
             // 
-            this.startParsing.Font = new System.Drawing.Font("Segoe UI Semilight", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.startParsing.ForeColor = System.Drawing.Color.Black;
-            this.startParsing.Location = new System.Drawing.Point(6, 141);
-            this.startParsing.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.startParsing.Name = "button1";
-            this.startParsing.Size = new System.Drawing.Size(212, 41);
-            this.startParsing.TabIndex = 1;
-            this.startParsing.Text = "Начать парсинг";
-            this.startParsing.UseVisualStyleBackColor = true;
+            this.startParsingButton.Font = new System.Drawing.Font("Segoe UI Semilight", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.startParsingButton.ForeColor = System.Drawing.Color.Black;
+            this.startParsingButton.Location = new System.Drawing.Point(6, 141);
+            this.startParsingButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.startParsingButton.Name = "startParsing";
+            this.startParsingButton.Size = new System.Drawing.Size(212, 41);
+            this.startParsingButton.TabIndex = 1;
+            this.startParsingButton.Text = "Начать парсинг";
+            this.startParsingButton.UseVisualStyleBackColor = true;
             // 
             // label2
             // 
@@ -157,7 +157,7 @@ partial class MainForms
             this.timeoutsBox.Name = "timeoutsBox";
             this.timeoutsBox.Size = new System.Drawing.Size(266, 25);
             this.timeoutsBox.TabIndex = 2;
-            this.timeoutsBox.Text = "003000300010";
+            this.timeoutsBox.Text = "005000300020";
             this.timeoutsBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.timeoutsBox.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
             // 
@@ -267,13 +267,13 @@ partial class MainForms
 
     private ComboBox citiesBox;
     private GroupBox groupBox1;
-    private Button startParsing;
+    private Button startParsingButton;
     private ComboBox parsePageFromBox;
     private Label label2;
     private Label label1;
     private ComboBox parsePageToBox;
     private Label label5;
-    private Button button2;
+    private Button openResultsButton;
     private GroupBox groupBox2;
     private TextBox loginInput;
     private TextBox passInput;
