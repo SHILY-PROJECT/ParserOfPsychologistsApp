@@ -2,5 +2,7 @@
 
 public interface IParser
 {
+    event EventHandler<StateOfProgressEventArgs>? StateOfProgressChanged;
+
     Task<IEnumerable<UserData>> ParseUsersByCityAsync();
 }

@@ -3,10 +3,14 @@
 public class MainParser : IParser
 {
     private readonly IParserSettings _parserSetting;
-    private readonly PageNavigator _pageNavigator;
+    private readonly IPageNavigator _pageNavigator;
     private readonly HttpClient _client;
 
-    public MainParser(IParserSettings parserSetting, PageNavigator pageNavigator, HttpClient client)
+    private StateOfProgressEventArgs _progress = null!;
+
+    public event EventHandler<StateOfProgressEventArgs>? StateOfProgressChanged;
+
+    public MainParser(IParserSettings parserSetting, IPageNavigator pageNavigator, HttpClient client)
     {
         _parserSetting = parserSetting;
         _pageNavigator = pageNavigator;
@@ -19,12 +23,21 @@ public class MainParser : IParser
     public IEnumerable<UserData> ParseUsersByCity()
     {
         var users = new List<UserData>();
+        _progress = new StateOfProgressEventArgs();
 
         while (_pageNavigator.MoveNextOnPage())
-            users.AddRange(this.ParseUsersFromPage().Select(uu => this.ParseInfoAboutUser(uu)));       
+        {
+            users.AddRange(this.ParseUsersFromPage().Select(uu => this.ParseInfoAboutUser(uu)));
+
+            ++_progress.NumberOfPagesProcessed;
+            OnStateOfProgressChanged();
+        }
 
         return users.ToList();
     }
+
+    protected void OnStateOfProgressChanged() =>
+        StateOfProgressChanged?.Invoke(this, _progress);
 
     private IEnumerable<Uri> ParseUsersFromPage()
     {
@@ -64,7 +77,12 @@ public class MainParser : IParser
 
         Thread.Sleep(_parserSetting.TimeoutAfterRequestToOneUserPage);
 
-        return user with { Contacts = this.ParseUserСontacts(userUrl, contactsId) };
+        user.Contacts = this.ParseUserСontacts(userUrl, contactsId);
+
+        ++_progress.NumberOfUsersProcessed;
+        OnStateOfProgressChanged();
+
+        return user;
     }
 
     private UserContactsData? ParseUserСontacts(Uri userLink, string contactsId)
