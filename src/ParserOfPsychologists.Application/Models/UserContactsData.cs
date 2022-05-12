@@ -1,12 +1,13 @@
 ﻿namespace ParserOfPsychologists.Application.Models;
 
-public class UserContactsData
+public record UserContactsData
 {
     private string _phone = string.Empty;
     private string _skype = string.Empty;
     private string _telegramUrl = string.Empty;
 
     public string Phone { get => _phone; set => _phone = TrimExcess(value, new[] { " ", "-", " " }); }
+    public bool SmsAvailable { get; set; }
     public bool TelegramAvailable { get; set; }
     public bool ViberAvailable { get; set; }
     public bool WhatsAppAvailable { get; set; }

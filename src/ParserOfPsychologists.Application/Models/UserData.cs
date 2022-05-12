@@ -12,10 +12,6 @@ public record UserData
     public string City { get; set; } = string.Empty;
     public UserContactsData? Contacts { get; set; }
 
-    public void ExtractSpecialtyAndCity(string specialtyAndCity)
-    {
-        var sc = specialtyAndCity.Replace("&nbsp;", "").Split('–');
-        Specialty = sc.FirstOrDefault() ?? string.Empty;
-        City = sc.LastOrDefault() ?? string.Empty;
-    }
+    public void ExtractSpecialtyAndCity(string specialtyAndCity) =>
+        (Specialty, City) = specialtyAndCity.Replace("&nbsp;", "").Split('–') is string[] sc && sc.Length >= 2 ? (sc[0], sc[1]) : ("", "");
 }

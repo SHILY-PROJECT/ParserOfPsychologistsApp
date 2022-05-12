@@ -5,8 +5,9 @@ public static class WinFormsUIRegistrator
     public static IServiceCollection AddWinFormsUI(this IServiceCollection services)
     {
         services
+            .AddApplication()
             .AddSingleton<MainForms>()
-            .AddApplication();
+            .AddTransient<WaitForm>();
 
         return services;
     }
