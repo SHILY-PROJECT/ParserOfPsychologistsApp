@@ -16,7 +16,7 @@ partial class MainForms
     private void InitializeComponent()
     {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForms));
-            this.citiesBox = new System.Windows.Forms.ComboBox();
+            this.cityBox = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.parsePageToBox = new System.Windows.Forms.ComboBox();
             this.parsePageFromBox = new System.Windows.Forms.ComboBox();
@@ -40,14 +40,14 @@ partial class MainForms
             // 
             // citiesBox
             // 
-            this.citiesBox.Font = new System.Drawing.Font("Segoe UI Semilight", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.citiesBox.ForeColor = System.Drawing.Color.Black;
-            this.citiesBox.FormattingEnabled = true;
-            this.citiesBox.Location = new System.Drawing.Point(6, 37);
-            this.citiesBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.citiesBox.Name = "citiesBox";
-            this.citiesBox.Size = new System.Drawing.Size(259, 23);
-            this.citiesBox.TabIndex = 0;
+            this.cityBox.Font = new System.Drawing.Font("Segoe UI Semilight", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.cityBox.ForeColor = System.Drawing.Color.Black;
+            this.cityBox.FormattingEnabled = true;
+            this.cityBox.Location = new System.Drawing.Point(6, 37);
+            this.cityBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cityBox.Name = "citiesBox";
+            this.cityBox.Size = new System.Drawing.Size(259, 23);
+            this.cityBox.TabIndex = 0;
             // 
             // groupBox1
             // 
@@ -59,7 +59,7 @@ partial class MainForms
             this.groupBox1.Controls.Add(this.startParsingButton);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.citiesBox);
+            this.groupBox1.Controls.Add(this.cityBox);
             this.groupBox1.Font = new System.Drawing.Font("Segoe UI Semilight", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.groupBox1.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.groupBox1.Location = new System.Drawing.Point(7, 5);
@@ -116,15 +116,15 @@ partial class MainForms
             this.label5.TabIndex = 2;
             this.label5.Text = "—";
             // 
-            // button1
+            // clearToCityBoxButton
             // 
-            this.clearToCityBoxButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button1.BackgroundImage")));
+            this.clearToCityBoxButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("clearToCityBoxButton.BackgroundImage")));
             this.clearToCityBoxButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.clearToCityBoxButton.Font = new System.Drawing.Font("Segoe UI Semilight", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.clearToCityBoxButton.ForeColor = System.Drawing.Color.Black;
             this.clearToCityBoxButton.Location = new System.Drawing.Point(268, 36);
             this.clearToCityBoxButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.clearToCityBoxButton.Name = "button1";
+            this.clearToCityBoxButton.Name = "clearToCityBoxButton";
             this.clearToCityBoxButton.Size = new System.Drawing.Size(26, 25);
             this.clearToCityBoxButton.TabIndex = 1;
             this.clearToCityBoxButton.UseVisualStyleBackColor = true;
@@ -146,7 +146,7 @@ partial class MainForms
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI Semilight", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label2.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.label2.Location = new System.Drawing.Point(6, 73);
+            this.label2.Location = new System.Drawing.Point(6, 74);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(107, 15);
@@ -280,7 +280,7 @@ partial class MainForms
 
     }
 
-    private ComboBox citiesBox;
+    private ComboBox cityBox;
     private GroupBox groupBox1;
     private Button startParsingButton;
     private ComboBox parsePageFromBox;
