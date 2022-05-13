@@ -2,13 +2,17 @@
 
 public interface IApplicationFacade
 {
+    event EventHandler<ApplicationInfoEventArgs>? ApplicationInfoSender;
+
+    IParser Parser { get; }
     IParserSettings ParserSettings { get; }
     ICityHandlerModule CityHandler { get; }
 
+    void OpenResultsFolder();
+
+    Task<IDictionary<string, string>> GetDefaultCities();
     Task ChangeCityAsync();
     Task<bool> ConnectAnAccountAsync();
-    Task<IReadOnlyCollection<string>> FindCityAsync(string cityName);
-    Task<bool> ParseUsersByCityAsync();
-
-    void OpenResultsFolder();
+    Task<IDictionary<string, string>> FindCityAsync(string cityName);
+    Task ParseUsersByCityAsync();
 }
