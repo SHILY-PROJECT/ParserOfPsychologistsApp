@@ -8,6 +8,8 @@ public class ParserSettings : IParserSettings
 
     public event EventHandler? SettingsChanged;
 
+    public string MainUrl { get => "https://www.b17.ru"; }
+
     public string CityOnInput
     {
         get => _cityOnInput;

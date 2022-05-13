@@ -6,14 +6,16 @@ public class KeeperOfResult
 {
     private static readonly string _dir = "results";
 
-    public static void OpenResultsFolder()
+    public IList<UserModel> Users { get; set; } = new List<UserModel>();
+
+    public void OpenResultsFolder()
     {
         var dir = new DirectoryInfo(_dir);
         if (!dir!.Exists) dir.Create();
         Process.Start("explorer.exe", dir.FullName);
     }
 
-    public static async Task SaveToFileAsync(IEnumerable<UserModel> users)
+    public async Task SaveToFileAsync()
     {
         var file = GetFileOfResult(".csv");
 
@@ -21,7 +23,7 @@ public class KeeperOfResult
         using var сsvWriter = new CsvWriter(streamWriter, System.Globalization.CultureInfo.InvariantCulture);
         сsvWriter.Context.RegisterClassMap<UserModelClassMap>();
 
-        await сsvWriter.WriteRecordsAsync(users);
+        await сsvWriter.WriteRecordsAsync(Users);
 
         Process.Start(new ProcessStartInfo("explorer.exe", $@"/n, /select, {file.FullName}")
         {
@@ -30,7 +32,7 @@ public class KeeperOfResult
         });
     }
 
-    private static FileInfo GetFileOfResult(string extension)
+    private FileInfo GetFileOfResult(string extension)
     {
         var file = new FileInfo(Path.Combine(_dir, $"result   {DateTime.Now:yyyy-MM-dd   HH-mm-ss---fffffff}{extension}"));
         if (!file.Directory!.Exists) file.Directory.Create();

@@ -4,6 +4,8 @@ public interface IParserSettings
 {
     event EventHandler? SettingsChanged;
 
+    string MainUrl { get; }
+
     int PageFrom { get; set; }
     int PageTo { get; set; }
 

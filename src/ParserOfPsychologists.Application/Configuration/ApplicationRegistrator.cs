@@ -16,8 +16,16 @@ public static class ApplicationRegistrator
             .AddScoped<IAccountManager, AccountManager>()
             .AddScoped<AccountData>()
             .AddScoped<AuthorizationModule>()
+            .AddScoped<KeeperOfResult>()
             .AddTransient(opt => HttpHelper.CreateHttpClient(cfg));
+
+        ApplicationRegistrator.AddErrorsForVerifyContent();
 
         return services;
     }
+
+    private static void AddErrorsForVerifyContent() => HttpHelper.AddErrorsForVerifyContent(new[]
+    {
+        "Доступ к сайту b17.ru для вашего IP адреса временно заблокирован"
+    });
 }
