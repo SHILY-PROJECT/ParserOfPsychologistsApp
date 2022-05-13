@@ -2,6 +2,11 @@
 
 public static class HttpHelper
 {
+    private static readonly HashSet<string> _errors = new(StringComparer.OrdinalIgnoreCase);
+
+    public static void AddErrorsForVerifyContent(string[] errors) =>
+        Array.ForEach(errors, err => _errors.Add(err));
+
     public static void AddRange(this HttpRequestHeaders requestHeaders, Dictionary<string, string> header, bool skipIfValueEmptyOrNull = false)
     {
         foreach (var kv in header)
@@ -36,18 +41,20 @@ public static class HttpHelper
         return client;
     }
 
-    public static async Task<string> HttpRequestAsync(this HttpClient client, HttpRequestMessage httpRequest)
+    public static async Task<string> HttpRequestAsync(this HttpClient client, HttpRequestMessage httpRequest, bool verifyResponse = false)
     {
         var resp = await client.SendAsync(httpRequest);
         using var streamReader = new StreamReader(await resp.Content.ReadAsStreamAsync(), Encoding.GetEncoding("windows-1251"));
-        return await streamReader.ReadToEndAsync();
+        var content = streamReader.ReadToEnd();
+        return !verifyResponse ? content : VerifyContent(content);
     }
 
-    public static string HttpRequest(this HttpClient client, HttpRequestMessage httpRequest)
+    public static string HttpRequest(this HttpClient client, HttpRequestMessage httpRequest, bool verifyResponse = false)
     {
         var resp = client.Send(httpRequest);
         using var streamReader = new StreamReader(resp.Content.ReadAsStream(), Encoding.GetEncoding("windows-1251"));
-        return streamReader.ReadToEnd();
+        var content = streamReader.ReadToEnd();
+        return !verifyResponse ? content : VerifyContent(content);
     }
 
     public static async Task<string> ExtractAsStringAsync(this HttpContent content)
@@ -60,5 +67,20 @@ public static class HttpHelper
     {
         using var streamReader = new StreamReader(content.ReadAsStream(), Encoding.GetEncoding("windows-1251"));
         return streamReader.ReadToEnd();
+    }
+
+    public static string VerifyContent(HttpContent content) =>
+        VerifyContent(content.ExtractAsString());
+    
+    public static string VerifyContent(string content)
+    {
+        foreach (var err in _errors)
+        {
+            if (content.Contains(err, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException(err);
+            }
+        }
+        return content;
     }
 }
