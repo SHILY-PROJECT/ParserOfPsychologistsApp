@@ -13,10 +13,10 @@ public static class ApplicationRegistrator
             .AddScoped<IPageNavigator, PageNavigator>()
             .AddScoped<IParserSettings, ParserSettings>()
             .AddScoped<IHttpClientConfiguration, HttpClientConfiguration>(opt => cfg)
+            .AddScoped<IKeeperOfResult, KeeperOfResult>()
             .AddScoped<IAccountManager, AccountManager>()
             .AddScoped<AccountData>()
             .AddScoped<AuthorizationModule>()
-            .AddScoped<KeeperOfResult>()
             .AddTransient(opt => HttpHelper.CreateHttpClient(cfg));
 
         ApplicationRegistrator.AddErrorsForVerifyContent();

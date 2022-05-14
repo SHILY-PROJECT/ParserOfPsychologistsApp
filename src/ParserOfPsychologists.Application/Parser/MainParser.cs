@@ -4,7 +4,7 @@ public class MainParser : IParser
 {
     private readonly Random _rnd = new();
 
-    private readonly KeeperOfResult _keeperOfResult;
+    private readonly IKeeperOfResult _keeperOfResult;
     private readonly IParserSettings _parserSetting;
     private readonly IPageNavigator _pageNavigator;
     private readonly HttpClient _client;
@@ -13,7 +13,7 @@ public class MainParser : IParser
 
     public event EventHandler<StateOfProgressEventArgs>? StateOfProgressChanged;
 
-    public MainParser(KeeperOfResult keeperOfResult, IParserSettings parserSetting, IPageNavigator pageNavigator, HttpClient client)
+    public MainParser(IKeeperOfResult keeperOfResult, IParserSettings parserSetting, IPageNavigator pageNavigator, HttpClient client)
     {
         _keeperOfResult = keeperOfResult;
         _parserSetting = parserSetting;
@@ -122,13 +122,8 @@ public class MainParser : IParser
         var doc = new HtmlDocument();
         var contactsCollection = new List<UserModel>();
 
-        var xPathPhone = "//div/descendant::span[contains(@style, 'text-decoration') and text()!='']";
-        var xPathAvailablePhoneCommunication = "./../following-sibling::div/descendant::span[contains(@style, 'contact') and text()!='']/parent::div[text()!='']|./../following-sibling::div[text()!='']";
-        
-        if (string.IsNullOrWhiteSpace(userPageReferer.OriginalString))
-            throw new ArgumentException("Parameter cannot be empty or null.", nameof(userPageReferer));
-        if (string.IsNullOrWhiteSpace(contactsId))
-            throw new ArgumentException("Parameter cannot be empty or null.", nameof(contactsId));
+        if (string.IsNullOrWhiteSpace(contactsId)) throw new ArgumentException("Parameter cannot be empty or null.", nameof(contactsId));
+        if (string.IsNullOrWhiteSpace(userPageReferer.OriginalString)) throw new ArgumentException("Parameter cannot be empty or null.", nameof(userPageReferer));
 
         var msg = new HttpRequestMessage
         {
@@ -146,7 +141,6 @@ public class MainParser : IParser
         var contactsFromBackend = JsonSerializer.Deserialize<ContactsBackendModel>(resp) ?? new();
 
         doc.LoadHtml(contactsFromBackend.HtmlWithKontaktOne);
-        var phoneNodes = doc.DocumentNode?.SelectNodes(xPathPhone);
 
         var socialMedia = new UserModel
         {
@@ -157,39 +151,41 @@ public class MainParser : IParser
             SiteUrl = ExtractHref(doc, "//a[contains(@href, 'http') and not(.//span)]")
         };
 
-        if (phoneNodes is null)
-        {
-            contactsCollection.Add(socialMedia);
-            return contactsCollection;
-        }
+        var xPathPhone = "//div/descendant::span[contains(@style, 'text-decoration') and text()!='']/ancestor::div[contains(@style, 'margin')][1]";       
+        var nodes = doc.DocumentNode?.SelectNodes(xPathPhone)?.Where(x => x is not null);
 
-        foreach (var node in phoneNodes)
+        if (nodes != null && nodes.Any())
         {
-            var messengersUnderPhone = node
-                ?.SelectSingleNode(xPathAvailablePhoneCommunication)
-                ?.SelectNodes(".//text()")
-                ?.Select(x => x?.InnerText ?? "")
-                ?.ToArray() ?? Array.Empty<string>();
-
-            if (node?.InnerText is string phone && !string.IsNullOrWhiteSpace(phone)) contactsCollection.Add(new UserModel
+            foreach (var node in nodes)
             {
-                Phone = phone,
-                SmsAvailable = messengersUnderPhone.Any(m => m.Contains("SMS", StringComparison.OrdinalIgnoreCase)),
-                TelegramAvailable = messengersUnderPhone.Any(m => m.Contains("Telegram", StringComparison.OrdinalIgnoreCase)),
-                WhatsAppAvailable = messengersUnderPhone.Any(m => m.Contains("WhatsApp", StringComparison.OrdinalIgnoreCase)),
-                ViberAvailable = messengersUnderPhone.Any(m => m.Contains("Viber", StringComparison.OrdinalIgnoreCase)),
-            });
+                var sb = new StringBuilder(HttpUtility.HtmlDecode(node.InnerText).Trim());
+                var lines = sb.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Select(l => l.Trim()).ToArray();
+
+                if (lines.FirstOrDefault() is not string phone || !Regex.IsMatch(phone, @"[0-9-\+\s]+")) continue;
+                var messengersUnderPhone = lines.Length >= 2 ? lines[1] : string.Empty;
+
+                contactsCollection.Add(new UserModel
+                {
+                    Phone = phone,
+                    SmsAvailable = messengersUnderPhone.Contains("SMS", StringComparison.OrdinalIgnoreCase),
+                    TelegramAvailable = messengersUnderPhone.Contains("Telegram", StringComparison.OrdinalIgnoreCase),
+                    WhatsAppAvailable = messengersUnderPhone.Contains("WhatsApp", StringComparison.OrdinalIgnoreCase),
+                    ViberAvailable = messengersUnderPhone.Contains("Viber", StringComparison.OrdinalIgnoreCase),
+                });
+            }
         }
 
-        return contactsCollection.Select(c => c with
+        if (!contactsCollection.Any()) contactsCollection.Add(socialMedia); 
+        else return contactsCollection.Select(c => c with
         {
             TelegramUrl = socialMedia.TelegramUrl,
             VkUrl = socialMedia.VkUrl,
             YouTubeUrl = socialMedia.YouTubeUrl,
             SkypeNickname = socialMedia.SkypeNickname,
             SiteUrl = socialMedia.SiteUrl
-        })
-        .ToList();
+        }).ToList();
+
+        return contactsCollection;
     }
 
     private static string ExtractHref(HtmlDocument doc, string xPath) =>
