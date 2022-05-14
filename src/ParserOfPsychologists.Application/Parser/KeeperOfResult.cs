@@ -2,7 +2,7 @@
 
 namespace ParserOfPsychologists.Application.Parser;
 
-public class KeeperOfResult
+public class KeeperOfResult : IKeeperOfResult
 {
     private static readonly string _dir = "results";
 

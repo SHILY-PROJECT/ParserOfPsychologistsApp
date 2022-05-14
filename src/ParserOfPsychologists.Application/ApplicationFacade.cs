@@ -6,7 +6,7 @@ public class ApplicationFacade : IApplicationFacade
     private readonly IParserSettings _parserSettings;
     private readonly ICityHandlerModule _cityHandler;
     private readonly IAccountManager _accountManager;
-    private readonly KeeperOfResult _keeperOfResult;
+    private readonly IKeeperOfResult _keeperOfResult;
 
     public event EventHandler<ApplicationInfoEventArgs>? ApplicationInfoSender;
 
@@ -15,7 +15,7 @@ public class ApplicationFacade : IApplicationFacade
         IParserSettings parserSettings,
         ICityHandlerModule cityHandlerModule,
         IAccountManager accountManager,
-        KeeperOfResult keeperOfResult)
+        IKeeperOfResult keeperOfResult)
     {
         _parser = parser;
         _parserSettings = parserSettings;
