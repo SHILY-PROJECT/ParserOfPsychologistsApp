@@ -2,8 +2,8 @@
 
 public class CityHandlerModule : ICityHandlerModule
 {
-    private readonly string _mainUrl = "https://www.b17.ru";
-
+    private readonly Dictionary<string, string> _defaultCities = new();
+    private readonly IParserSettings _parserSettings;
     private readonly HttpClient _client;
 
     private string _cityName = string.Empty;
@@ -12,44 +12,70 @@ public class CityHandlerModule : ICityHandlerModule
 
     public event EventHandler<CityHandlerModuleEventArgs>? CityChanged;
 
-    public CityHandlerModule(HttpClient client)
+    public CityHandlerModule(IParserSettings parserSettings, HttpClient client)
     {
+        _parserSettings = parserSettings;
         _client = client;
     }
 
     public int NumberOfAvailablePagesForCurrentCity { get; private set; }
-    public Uri CityUrl { get => new($"{_mainUrl}{_cityRoute}"); }
-    public Dictionary<string, string> DefaultCities { get; } = new();
+    public Uri CityUrl { get => new($"{_parserSettings.MainUrl}{_cityRoute}"); }
     public Dictionary<string, string> Cities { get; } = new();
+
+    public void ResetCurrentCity()
+    {
+        (_cityName, _cityRoute) = (string.Empty, string.Empty);
+
+        if (Cities.Any()) Cities.Clear();
+        Cities.AddRange(_defaultCities);
+    }
 
     public bool IsChanged(string cityName) =>
         !string.IsNullOrWhiteSpace(cityName) && !_cityName.Equals(cityName, StringComparison.OrdinalIgnoreCase);
 
-    public async Task<IEnumerable<string>> FindCityAsync(string cityName)
+    public async Task<IDictionary<string, string>> GetDefaultCities()
     {
-        var doc = new HtmlDocument();
+        if (!_defaultCities.Any())
+        {
+            foreach (var city in await FindCityAsync(string.Empty))
+            {
+                _defaultCities.Add(city.Key, city.Value);
+            }
+        }
+        return _defaultCities;
+    }
 
-        var xPathCity = "//div[@city!='' and text()!='']";
-        var xPathCityChangeKey = "//input[contains(@id, 'city_change_key')]";
+    public async Task<IDictionary<string, string>> FindCityAsync(string cityName)
+    {
+        var xCityName = "//div[@city!='' and text()!='']";
+        var xCityChangeKey = "//input[contains(@id, 'city_change_key')]";
 
         var msg = new HttpRequestMessage
         {
             Method = HttpMethod.Post,
-            RequestUri = new Uri($"{_mainUrl}/city_backend.php"),
+            RequestUri = new Uri($"{_parserSettings.MainUrl}/city_backend.php"),
             Content = new StringContent($"mod=backend&city_text={cityName}"),
         };
         msg.Headers.Add("Connection", "keep-alive");
         msg.Content.Headers.ContentType = new("application/x-www-form-urlencoded");
         msg.Content.Headers.ContentEncoding.Add("UTF-8");
 
+        var doc = new HtmlDocument();
         var resp = await _client.HttpRequestAsync(msg);
         var cityBackend = JsonSerializer.Deserialize<CityBackendModel>(resp) ?? new();
         doc.LoadHtml(cityBackend.Body);
 
-        _cityChangeKey = doc.DocumentNode?.SelectSingleNode(xPathCityChangeKey)?.GetAttributeValue("value", string.Empty) ?? string.Empty;
-        doc.DocumentNode?.SelectNodes(xPathCity).ToList().ForEach(hn => Cities.Add(hn.InnerHtml, hn.GetAttributeValue("city", string.Empty)));
+        _cityChangeKey = doc.DocumentNode?.SelectSingleNode(xCityChangeKey)?.GetAttributeValue("value", string.Empty) ?? string.Empty;
 
-        return Cities.Select(kv => kv.Key);
+        var updatedCities = doc.DocumentNode
+            ?.SelectNodes(xCityName)
+            ?.Select(hn => KeyValuePair.Create(hn.InnerHtml, hn.GetAttributeValue("city", string.Empty)))
+            ?.ToDictionary(x => x.Key, x => x.Value);
+
+        if (Cities.Any()) Cities.Clear();
+        if (updatedCities != null) Cities.AddRange(updatedCities);
+
+        return Cities;
     }
 
     public async Task ChangeCityAsync(string cityName)
@@ -58,11 +84,12 @@ public class CityHandlerModule : ICityHandlerModule
         var msg = new HttpRequestMessage
         {
             Method = HttpMethod.Get,
-            RequestUri = new Uri($"{_mainUrl}/city_backend.php?action=city_change&city={Cities[cityName]}&city_change_key={_cityChangeKey}")
+            RequestUri = new Uri($"{_parserSettings.MainUrl}/city_backend.php?action=city_change&city={Cities[cityName]}&city_change_key={_cityChangeKey}")
         };
         msg.Headers.AddOrReplace("Referer", referer);
 
         var resp = await _client.SendAsync(msg);
+        HttpHelper.VerifyContent(resp.Content);
 
         if (resp.Headers.GetValues("Location").FirstOrDefault() is string value)
         {
@@ -74,20 +101,28 @@ public class CityHandlerModule : ICityHandlerModule
         }
     }
 
-    protected void OnCityChanged(CityHandlerModuleEventArgs args) => CityChanged?.Invoke(this, args);
+    protected void OnCityChanged(CityHandlerModuleEventArgs args) =>
+        CityChanged?.Invoke(this, args);
 
     private async Task<int> GetAvailablePages(string referer)
     {
-        var doc = new HtmlDocument();
+        var xLastPage = "//div[contains(@id, 'page_list')]/descendant::a[last()]";
+        var xUserLink = "//div[contains(@id, 'items_list_main')]/descendant::a[contains(@name, 'spec') and @href!='']";
 
-        var xPathLastPage = "//div[contains(@id, 'page_list')]/descendant::a[last()]";
+        var value = 0;
 
         var msg = new HttpRequestMessage(HttpMethod.Get, CityUrl);
         msg.Headers.AddOrReplace("Referer", referer);
 
-        var resp = await _client.HttpRequestAsync(msg);
+        var doc = new HtmlDocument();
+        var resp = await _client.HttpRequestAsync(msg, true);
         doc.LoadHtml(resp);
 
-        return Convert.ToInt32(doc.DocumentNode.SelectSingleNode(xPathLastPage).InnerText);
+        return value switch
+        {
+            _ when int.TryParse(doc.DocumentNode?.SelectSingleNode(xLastPage)?.InnerText, out value) => value,
+            _ when doc.DocumentNode?.SelectSingleNode(xUserLink) != null => 1,
+            _ => 0
+        };
     }
 }
