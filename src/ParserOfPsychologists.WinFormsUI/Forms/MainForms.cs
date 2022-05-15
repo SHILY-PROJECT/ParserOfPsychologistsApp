@@ -11,8 +11,6 @@ public partial class MainForms : Form
     private readonly IApplicationFacade _facade;
     private readonly IParserSettings _parserSettings;
 
-    private string _lastEntryToFindCity = string.Empty;
-
     public MainForms(IServiceProvider services, IApplicationFacade facade, IParserSettings parserSettings)
     {
         _services = services;
@@ -44,7 +42,7 @@ public partial class MainForms : Form
 
         this.cityBox.Click += (s, e) => OnClockCityBox(s, e);
         this.cityBox.SelectedValueChanged += async (s, e) => await this.OnValueChangedCitiesBox(s, e);
-        this.cityBox.TextChanged += async (s, e) => await this.OnEntryInCityField(s, e);
+        this.cityBox.TextUpdate += async (s, e) => await this.OnEntryInCityField(s, e);
 
         this.parsePageFromBox.SelectedValueChanged += (s, e) => this.OnPageFromValueChanged(s, e);
         this.startParsingButton.Click += async (s, e) => await this.OnParseUsersByCityAsync();
@@ -93,15 +91,11 @@ public partial class MainForms : Form
 
     private async Task OnEntryInCityField(object? source, EventArgs args)
     {
-        /*
-         *  TODO: Исправить двойное заполнение коллекции.
-         */
-
-        if (source is not ComboBox box || box.Text == _lastEntryToFindCity) return;
+        if (source is not ComboBox box) return;
 
         if (!string.IsNullOrWhiteSpace(box.Text) && !box.Items.Contains(box.Text))
         {
-            var foundCities = (await _facade.FindCityAsync(_lastEntryToFindCity = box.Text)).Keys.ToArray();
+            var foundCities = (await _facade.FindCityAsync(box.Text)).Keys.ToArray();
 
             box.Items.Clear();
 
