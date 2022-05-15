@@ -4,19 +4,25 @@ namespace ParserOfPsychologists.Application.Parser;
 
 public class KeeperOfResult : IKeeperOfResult
 {
-    private static readonly string _dir = "results";
+    private static DirectoryInfo Dir
+    {
+        get
+        {
+            var dir = new DirectoryInfo("results");
+            if (!dir.Exists) dir.Create();
+            return dir;
+        }
+    }
 
     public IList<UserModel> Users { get; set; } = new List<UserModel>();
 
-    public void OpenResultsFolder()
-    {
-        var dir = new DirectoryInfo(_dir);
-        if (!dir!.Exists) dir.Create();
-        Process.Start("explorer.exe", dir.FullName);
-    }
+    public void OpenResultsFolder() =>
+        Process.Start("explorer.exe", Dir.FullName);
 
     public async Task SaveToFileAsync()
     {
+        if (!Users.Any()) return;
+
         var file = GetFileOfResult(".csv");
 
         using var streamWriter = new StreamWriter(file.FullName, true, Encoding.UTF8);
@@ -32,10 +38,6 @@ public class KeeperOfResult : IKeeperOfResult
         });
     }
 
-    private FileInfo GetFileOfResult(string extension)
-    {
-        var file = new FileInfo(Path.Combine(_dir, $"result   {DateTime.Now:yyyy-MM-dd   HH-mm-ss---fffffff}{extension}"));
-        if (!file.Directory!.Exists) file.Directory.Create();
-        return file;
-    }
+    private FileInfo GetFileOfResult(string extension) => 
+        new(Path.Combine(Dir.FullName, $"result   {DateTime.Now:yyyy-MM-dd   HH-mm-ss---fffffff}{extension}"));
 }
