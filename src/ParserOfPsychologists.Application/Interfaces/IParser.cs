@@ -4,5 +4,6 @@ public interface IParser
 {
     event EventHandler<StateOfProgressEventArgs>? StateOfProgressChanged;
 
-    Task<IEnumerable<UserModel>> ParseUsersByCityAsync();
+    IEnumerable<UserModel> ParseUsers();
+    Task<IEnumerable<UserModel>> ParseUsersAsync();
 }

@@ -21,10 +21,10 @@ public class MainParser : IParser
         _client = client;
     }
 
-    public async Task<IEnumerable<UserModel>> ParseUsersByCityAsync() =>
-        await Task.Run(() => ParseUsersByCity());
+    public async Task<IEnumerable<UserModel>> ParseUsersAsync() =>
+        await Task.Run(() => ParseUsers());
 
-    private IEnumerable<UserModel> ParseUsersByCity()
+    public IEnumerable<UserModel> ParseUsers()
     {
         _keeperOfResult.Users = new List<UserModel>();
         _progress = new StateOfProgressEventArgs();

@@ -91,7 +91,7 @@ public class ApplicationFacade : IApplicationFacade
     {
         try
         {
-            await _parser.ParseUsersByCityAsync();            
+            await _parser.ParseUsersAsync();            
         }
         catch (Exception ex)
         {
