@@ -7,6 +7,7 @@
     <Company>SHILY PROJECT</Company>
     <Authors>SHILY</Authors>
     <Product>Parser Of Psychologists</Product>
+	<IsPublishable>false</IsPublishable>
   </PropertyGroup>
 
   <ItemGroup>

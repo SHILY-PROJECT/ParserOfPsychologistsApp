@@ -10,7 +10,8 @@
     <Authors>SHILY</Authors>
     <Company>SHILY PROJECT</Company>
     <Product>Parser Of Psychologists</Product>
-    <Version>0.7.5</Version>
+    <Version>0.7.5</Version>	  
+	<AssemblyName>ParserOfPsychologists</AssemblyName>	  
   </PropertyGroup>
 
   <ItemGroup>
