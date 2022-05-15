@@ -5,9 +5,13 @@ public partial class MainForms : Form
     private readonly string _fromLineStartsWith = "с";
     private readonly string _toLineStartsWith = "по";
 
+    private IDictionary<string, string> _defaultCities = new Dictionary<string, string>();
+
     private readonly IServiceProvider _services;
     private readonly IApplicationFacade _facade;
     private readonly IParserSettings _parserSettings;
+
+    private string _lastEntryToFindCity = string.Empty;
 
     public MainForms(IServiceProvider services, IApplicationFacade facade, IParserSettings parserSettings)
     {
@@ -21,63 +25,123 @@ public partial class MainForms : Form
 
     private void RegisterFormEvents()
     {
-        ActionOnEventsToLoadAndCloseForm();
-        ActionOnEventsParser();        
+        this.ActionOnEventsToLoadAndCloseForm();
+        this.ActionOnEventsParser();
     }
 
     private void ActionOnEventsToLoadAndCloseForm()
     {
-        _facade.CityHandler.CityChanged += OnCityChanged;
+        _facade.ApplicationInfoSender += this.OnShowMessageBox;
+        _facade.CityHandler.CityChanged += this.OnChangedCityField;
 
-        this.Load += async (s, e) =>
-        {
-            var cities = async () => (await _facade.FindCityAsync(string.Empty)).ToArray();
-            this.citiesBox.Items.AddRange(await cities.Invoke());
-        };
-        this.Load += (s, e) => ChangeControlAccess(false);
+        this.Load += (s, e) => this.ChangeControlEnabled(false);
+        this.Load += async (s, e) => this.cityBox.Items.AddRange((_defaultCities = await _facade.GetDefaultCities()).Keys.ToArray());      
     }
 
     private void ActionOnEventsParser()
     {
-        this.citiesBox.SelectedValueChanged += async (s, e) =>
-        {
-            if (s is ComboBox box && _facade.CityHandler.IsChanged(_parserSettings.CityOnInput = box.Text))
-            {
-                ChangeControlAccess(false);
-                await _facade.ChangeCityAsync();
-            }
-        };
+        this.clearToCityBoxButton.Click += (s, e) => this.OnClickClearCityField();
 
-        this.parsePageFromBox.SelectedValueChanged += (s, e) =>
-        {
-            if (s is ComboBox fromBox && PageNumberOf(fromBox.Text) is int from)
-            {
-                var textTo = this.parsePageToBox.Text;
+        this.cityBox.Click += (s, e) => OnClockCityBox(s, e);
+        this.cityBox.SelectedValueChanged += async (s, e) => await this.OnValueChangedCitiesBox(s, e);
+        this.cityBox.TextChanged += async (s, e) => await this.OnEntryInCityField(s, e);
 
-                this.parsePageToBox.Items.Clear();
-                this.parsePageToBox.Items.AddRange(CreateSequenceOfPages(_toLineStartsWith, from, _facade.CityHandler.NumberOfAvailablePagesForCurrentCity - from + 1));
-
-                this.parsePageToBox.Text = from < PageNumberOf(textTo) ? textTo : $"{_toLineStartsWith} {from}";
-            }
-        };
-
-        this.startParsingButton.Click += async (s, e) => await this.ParseUsersByCityAsync();
-
+        this.parsePageFromBox.SelectedValueChanged += (s, e) => this.OnPageFromValueChanged(s, e);
+        this.startParsingButton.Click += async (s, e) => await this.OnParseUsersByCityAsync();
         this.openResultsButton.Click += (s, e) => _facade.OpenResultsFolder();
     }
 
-    private async Task ParseUsersByCityAsync()
+    private void OnClickClearCityField()
+    {
+        this.ChangeControlEnabled(false);
+        this.cityBox.Text = string.Empty;
+        this.parsePageToBox.Items.Clear();
+        this.parsePageFromBox.Items.Clear();
+        this._facade.CityHandler.ResetCurrentCity();
+        this.cityBox.Items.Clear();
+        this.cityBox.Items.AddRange(_defaultCities.Keys.ToArray());
+    }
+
+    private void OnPageFromValueChanged(object? source, EventArgs args)
+    {
+        if (source is not ComboBox from) return;
+
+        var value = this.PageNumberOf(from.Text);
+        var textTo = this.parsePageToBox.Text;
+
+        this.parsePageToBox.Items.Clear();
+        this.parsePageToBox.Items.AddRange(
+            CreateSequenceOfPages(_toLineStartsWith, value, _facade.CityHandler.NumberOfAvailablePagesForCurrentCity - value + 1));
+
+        this.parsePageToBox.Text = value < this.PageNumberOf(textTo) ? textTo : $"{_toLineStartsWith} {value}";
+    }
+
+    private void OnClockCityBox(object? source, EventArgs args)
+    {
+        if (source is not ComboBox box) return;
+        else box.DroppedDown = true;
+    }
+
+    private async Task OnValueChangedCitiesBox(object? source, EventArgs args)
+    {
+        if (source is not ComboBox box || !_facade.CityHandler.IsChanged(box.Text)) return;
+        else _parserSettings.CityOnInput = box.Text;
+
+        this.ChangeControlEnabled(false);
+        await _facade.ChangeCityAsync();
+    }
+
+    private async Task OnEntryInCityField(object? source, EventArgs args)
+    {
+        /*
+         *  TODO: Исправить двойное заполнение коллекции.
+         */
+
+        if (source is not ComboBox box || box.Text == _lastEntryToFindCity) return;
+
+        if (!string.IsNullOrWhiteSpace(box.Text) && !box.Items.Contains(box.Text))
+        {
+            var foundCities = (await _facade.FindCityAsync(_lastEntryToFindCity = box.Text)).Keys.ToArray();
+
+            box.Items.Clear();
+
+            box.Focus();
+            box.SelectionStart = box.Text.Length;
+
+            if (foundCities.Any())
+            {
+                box.Items.AddRange(foundCities);
+                box.DroppedDown = true;              
+            }
+            return;
+        }
+
+        if (box.Text.StartsWith(" ")) box.Text = box.Text.Remove(0, 1);
+        
+        if (!Enumerable.SequenceEqual(_defaultCities.Keys.Cast<string>(), box.Items.Cast<string>()))
+        {
+            box.Items.Clear();
+
+            box.Focus();
+            box.SelectionStart = box.Text.Length;
+
+            box.Items.AddRange(_defaultCities.Keys.ToArray());
+            box.DroppedDown = true;
+        }
+    }
+
+    private async Task OnParseUsersByCityAsync()
     {
         using var waitForm = _services.GetRequiredService<WaitForm>();
 
         try
         {
-            if (string.IsNullOrWhiteSpace(this.citiesBox.Text))
+            if (string.IsNullOrWhiteSpace(this.cityBox.Text))
                 throw new InvalidOperationException("Select cities from the list.");
 
             _parserSettings.SetTimeouts(this.timeoutsBox.Text);
-            _parserSettings.PageTo = PageNumberOf(this.parsePageToBox.Text);
-            _parserSettings.PageFrom = PageNumberOf(this.parsePageFromBox.Text);
+            _parserSettings.PageTo = this.PageNumberOf(this.parsePageToBox.Text);
+            _parserSettings.PageFrom = this.PageNumberOf(this.parsePageFromBox.Text);
 
             waitForm.Owner = this;
             waitForm.ShowInTaskbar = false;
@@ -88,7 +152,7 @@ public partial class MainForms : Form
         }
         catch (Exception ex)
         {
-            ShowMessageBox(ex);
+            this.OnShowMessageBox(this, new(ex.Message));
         }
         finally
         {
@@ -96,20 +160,20 @@ public partial class MainForms : Form
         }
     }
 
-    private void ChangeControlAccess(bool enableOrDisable)
+    private void ChangeControlEnabled(bool enableOrDisable)
     {
         this.startParsingButton.Enabled = enableOrDisable;
         this.parsePageFromBox.Enabled = enableOrDisable;
         this.parsePageToBox.Enabled = enableOrDisable;
     }
 
-    private void OnCityChanged(object? obj, CityHandlerModuleEventArgs args)
+    private void OnChangedCityField(object? source, CityHandlerModuleEventArgs args)
     {
         this.parsePageFromBox.Items.Clear();
         this.parsePageToBox.Items.Clear();
 
-        if (CreateSequenceOfPages(_fromLineStartsWith, 1, args.PagesAvailable) is string[] arrFrom && arrFrom.Any() &&
-            CreateSequenceOfPages(_toLineStartsWith, 1, args.PagesAvailable) is string[] arrTo && arrTo.Any())
+        if (this.CreateSequenceOfPages(_fromLineStartsWith, 1, args.PagesAvailable) is string[] arrFrom && arrFrom.Any() &&
+            this.CreateSequenceOfPages(_toLineStartsWith, 1, args.PagesAvailable) is string[] arrTo && arrTo.Any())
         {
             this.parsePageFromBox.Items.AddRange(arrFrom);
             this.parsePageToBox.Items.AddRange(arrTo);
@@ -117,17 +181,17 @@ public partial class MainForms : Form
             this.parsePageToBox.Text = this.parsePageToBox.Items[this.parsePageToBox.Items.Count - 1] as string;
             this.parsePageFromBox.Text = this.parsePageFromBox.Items[0] as string;
 
-            ChangeControlAccess(true);
+            this.ChangeControlEnabled(true);
         }
     }
 
-    private static int PageNumberOf(string pageNumberWithPrefix)
+    private int PageNumberOf(string pageNumberWithPrefix)
     {
         if (int.TryParse(pageNumberWithPrefix.Split(' ').LastOrDefault(), out var value)) return value;
         throw new ArgumentException("Failed to retrieve page number.", nameof(pageNumberWithPrefix));
     }
 
-    private static string[] CreateSequenceOfPages(string lineStartsWith, int pageNumberingStartsWith, int pagesAvailable)
+    private string[] CreateSequenceOfPages(string lineStartsWith, int pageNumberingStartsWith, int pagesAvailable)
     {
         if (!lineStartsWith.All(x => char.IsLetter(x)))
             throw new ArgumentException("String should consist of the letter.", nameof(lineStartsWith));
@@ -137,6 +201,17 @@ public partial class MainForms : Form
         return Enumerable.Range(pageNumberingStartsWith, pagesAvailable).Select(x => $"{lineStartsWith} {x}").ToArray();
     }
 
-    private static void ShowMessageBox(Exception ex) =>
-        MessageBox.Show(ex.Message, "Ooops...", MessageBoxButtons.OK);  
+    private void OnShowMessageBox(object? source, ApplicationInfoEventArgs args)
+    {
+        var msg = new StringBuilder(args.Message);
+        var title = !string.IsNullOrWhiteSpace(args.Title) ? args.Title : "Ooops...";
+
+        if (args.Ex is Exception ex)
+        {
+            if (msg.Length > 0) msg.AppendLine(new string('-', 50));
+            msg.AppendLine(ex.Message);
+        }
+
+        MessageBox.Show(msg.ToString(), title, MessageBoxButtons.OK);
+    }
 }
