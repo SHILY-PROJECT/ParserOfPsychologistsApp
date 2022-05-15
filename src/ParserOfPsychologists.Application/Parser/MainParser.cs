@@ -151,18 +151,16 @@ public class MainParser : IParser
             SiteUrl = ExtractHref(doc, "//a[contains(@href, 'http') and not(.//span)]")
         };
 
-        var xPathPhone = "//div/descendant::span[contains(@style, 'text-decoration') and text()!='']/ancestor::div[contains(@style, 'margin')][1]";       
-        var nodes = doc.DocumentNode?.SelectNodes(xPathPhone)?.Where(x => x is not null);
+        var xPhone = "//span[contains(@style, 'text-decoration') and text()!='']";
+        var xPhoneContainer = "//div/descendant::span[contains(@style, 'text-decoration') and text()!='']/ancestor::div[contains(@style, 'margin')][1]";
+        var nodes = doc.DocumentNode?.SelectNodes(xPhoneContainer)?.Where(x => x is not null);
 
         if (nodes != null && nodes.Any())
         {
             foreach (var node in nodes)
             {
-                var sb = new StringBuilder(HttpUtility.HtmlDecode(node.InnerText).Trim());
-                var lines = sb.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Select(l => l.Trim()).ToArray();
-
-                if (lines.FirstOrDefault() is not string phone || !Regex.IsMatch(phone, @"[0-9-\+\s]+")) continue;
-                var messengersUnderPhone = lines.Length >= 2 ? lines[1] : string.Empty;
+                var messengersUnderPhone = HttpUtility.HtmlDecode(node.InnerText).Trim() ?? string.Empty;
+                if (node?.SelectSingleNode(xPhone)?.InnerText is not string phone || string.IsNullOrWhiteSpace(phone)) continue;
 
                 contactsCollection.Add(new UserModel
                 {
