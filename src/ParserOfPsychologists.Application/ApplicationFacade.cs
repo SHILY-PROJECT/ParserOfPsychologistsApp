@@ -4,29 +4,34 @@ public class ApplicationFacade : IApplicationFacade
 {
     private readonly IParser _parser;
     private readonly IParserSettings _parserSettings;
-    private readonly ICityHandlerModule _cityHandler;
-    private readonly IAccountManager _accountManager;
     private readonly IKeeperOfResult _keeperOfResult;
+    private readonly ICityHandlerModule _cityHandler;
+    private readonly IAuthorization _authorization;
+    private readonly IAccountManager _accountManager;
 
     public event EventHandler<ApplicationInfoEventArgs>? ApplicationInfoSender;
 
     public ApplicationFacade(
+        IKeeperOfResult keeperOfResult,
         IParser parser,
         IParserSettings parserSettings,
         ICityHandlerModule cityHandlerModule,
-        IAccountManager accountManager,
-        IKeeperOfResult keeperOfResult)
+        IAuthorization authorization,
+        IAccountManager accountManager)
     {
+        _keeperOfResult = keeperOfResult;
         _parser = parser;
         _parserSettings = parserSettings;
         _cityHandler = cityHandlerModule;
+        _authorization = authorization;
         _accountManager = accountManager;
-        _keeperOfResult = keeperOfResult;
     }
 
     public IParser Parser { get => _parser; }
     public IParserSettings ParserSettings { get => _parserSettings; }
+    public IAuthorization Authorization { get => _authorization; }
     public ICityHandlerModule CityHandler { get => _cityHandler; }
+    public IKeeperOfResult KeeperOfResult { get => _keeperOfResult; }
 
     public void OpenResultsFolder() =>
         _keeperOfResult.OpenResultsFolder();

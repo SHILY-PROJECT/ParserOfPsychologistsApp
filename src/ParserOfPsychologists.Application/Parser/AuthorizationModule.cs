@@ -1,6 +1,6 @@
 ﻿namespace ParserOfPsychologists.Application.Parser;
 
-public class AuthorizationModule
+public class AuthorizationModule : IAuthorization
 {
     private readonly IParserSettings _parserSettings;
     private readonly HttpClient _client;
@@ -17,7 +17,7 @@ public class AuthorizationModule
         _account = account;
     }
 
-    public Task<bool> SignInAsync(AccountData account)
+    public Task<bool> SignInAsync()
     {
         
         /*

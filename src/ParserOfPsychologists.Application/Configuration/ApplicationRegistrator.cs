@@ -16,9 +16,9 @@ public static class ApplicationRegistrator
             .AddScoped<IParserSettings, ParserSettings>()
             .AddScoped<IHttpClientConfiguration, HttpClientConfiguration>(opt => cfg)
             .AddScoped<IKeeperOfResult, KeeperOfResult>()
+            .AddScoped<IAuthorization, AuthorizationModule>()
             .AddScoped<IAccountManager, AccountManager>()
             .AddScoped<AccountData>()
-            .AddScoped<AuthorizationModule>()
             .AddTransient(opt => HttpHelper.CreateHttpClient(cfg));
 
         return services;

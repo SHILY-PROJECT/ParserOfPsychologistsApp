@@ -6,7 +6,9 @@ public interface IApplicationFacade
 
     IParser Parser { get; }
     IParserSettings ParserSettings { get; }
+    IAuthorization Authorization { get; }
     ICityHandlerModule CityHandler { get; }
+    IKeeperOfResult KeeperOfResult { get; }
 
     void OpenResultsFolder();
 

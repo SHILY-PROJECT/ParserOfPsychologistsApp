@@ -32,6 +32,7 @@ public partial class MainForms : Form
         _facade.ApplicationInfoSender += this.OnShowMessageBox;
         _facade.CityHandler.CityChanged += this.OnChangedCityField;
 
+        this.Load += (s, e) => this.OnChangeTitle();
         this.Load += (s, e) => this.ChangeParserControlEnabled(false);
         this.Load += (s, e) => this.ChangeAuthControlEnabled(false);
         this.Load += async (s, e) => this.cityBox.Items.AddRange((_defaultCities = await _facade.GetDefaultCities()).Keys.ToArray());      
@@ -90,9 +91,7 @@ public partial class MainForms : Form
         if (box.Checked)
         {
             this.ChangeAuthControlEnabled(true);
-            
-            var auth = _services.GetRequiredService<AuthorizationModule>();
-            this.captchaBox.Image = await auth.GetCaptcha();
+            this.captchaBox.Image = await ((AuthorizationModule)_facade.Authorization).GetCaptcha();
         }
         else
         {
@@ -237,5 +236,13 @@ public partial class MainForms : Form
         }
 
         MessageBox.Show(msg.ToString(), title, MessageBoxButtons.OK);
+    }
+
+    private void OnChangeTitle()
+    {
+        var separator = "SHILY ";
+        var endOf = new List<string> { "ಠ_ಠ", "(¬_¬ )", "ಠ▃ಠ", "ಠಿ_ಠ", "⚆_⚆", "( •̀ ω •́ )y", "(╹ڡ╹ )", "(¬‿¬)", "(⊙﹏⊙)", "(⊙ˍ⊙)", "⊙﹏⊙∥", ",,ԾㅂԾ,,", "(。﹏。)", "(⊙_⊙)？", "ಠ╭╮ಠ" };
+        var title = this.Text.Split(new string[] { separator }, StringSplitOptions.None);
+        this.Text = $"{title.FirstOrDefault()}{separator}{endOf[new Random().Next(endOf.Count)]}";
     }
 }
