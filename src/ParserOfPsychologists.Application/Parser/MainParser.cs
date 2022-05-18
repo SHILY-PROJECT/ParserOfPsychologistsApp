@@ -173,15 +173,16 @@ public class MainParser : IParser
             }
         }
 
-        if (!contactsCollection.Any()) contactsCollection.Add(socialMedia); 
-        else return contactsCollection.Select(c => c with
+        if (!contactsCollection.Any()) contactsCollection.Add(socialMedia);
+        else contactsCollection = contactsCollection.Select(c => c with
         {
             TelegramUrl = socialMedia.TelegramUrl,
             VkUrl = socialMedia.VkUrl,
             YouTubeUrl = socialMedia.YouTubeUrl,
             SkypeNickname = socialMedia.SkypeNickname,
             SiteUrl = socialMedia.SiteUrl
-        }).ToList();
+        })
+        .ToList();
 
         return contactsCollection;
     }

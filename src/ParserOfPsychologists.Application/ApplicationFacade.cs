@@ -1,4 +1,6 @@
-﻿namespace ParserOfPsychologists.Application;
+﻿using ParserOfPsychologists.Application.Parser.CustomEventArgs;
+
+namespace ParserOfPsychologists.Application;
 
 public class ApplicationFacade : IApplicationFacade
 {
