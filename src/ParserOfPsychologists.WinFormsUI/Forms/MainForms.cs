@@ -32,7 +32,8 @@ public partial class MainForms : Form
         _facade.ApplicationInfoSender += this.OnShowMessageBox;
         _facade.CityHandler.CityChanged += this.OnChangedCityField;
 
-        this.Load += (s, e) => this.ChangeControlEnabled(false);
+        this.Load += (s, e) => this.ChangeParserControlEnabled(false);
+        this.Load += (s, e) => this.ChangeAuthControlEnabled(false);
         this.Load += async (s, e) => this.cityBox.Items.AddRange((_defaultCities = await _facade.GetDefaultCities()).Keys.ToArray());      
     }
 
@@ -47,11 +48,13 @@ public partial class MainForms : Form
         this.parsePageFromBox.SelectedValueChanged += (s, e) => this.OnPageFromValueChanged(s, e);
         this.startParsingButton.Click += async (s, e) => await this.OnParseUsersByCityAsync();
         this.openResultsButton.Click += (s, e) => _facade.OpenResultsFolder();
+
+        this.connectAccount.CheckedChanged += async (s, e) => await OnConnectAccount(s, e);
     }
 
     private void OnClickClearCityField()
     {
-        this.ChangeControlEnabled(false);
+        this.ChangeParserControlEnabled(false);
         this.cityBox.Text = string.Empty;
         this.parsePageToBox.Items.Clear();
         this.parsePageFromBox.Items.Clear();
@@ -80,12 +83,30 @@ public partial class MainForms : Form
         else box.DroppedDown = true;
     }
 
+    private async Task OnConnectAccount(object? source, EventArgs args)
+    {
+        if (source is not CheckBox box) return;
+
+        if (box.Checked)
+        {
+            this.ChangeAuthControlEnabled(true);
+            
+            var auth = _services.GetRequiredService<AuthorizationModule>();
+            this.captchaBox.Image = await auth.GetCaptcha();
+        }
+        else
+        {
+            this.ChangeAuthControlEnabled(false);
+            this.captchaBox.Image = default;
+        }
+    }
+
     private async Task OnValueChangedCitiesBox(object? source, EventArgs args)
     {
         if (source is not ComboBox box || !_facade.CityHandler.IsChanged(box.Text)) return;
         else _parserSettings.CityOnInput = box.Text;
 
-        this.ChangeControlEnabled(false);
+        this.ChangeParserControlEnabled(false);
         await _facade.ChangeCityAsync();
     }
 
@@ -154,11 +175,20 @@ public partial class MainForms : Form
         }
     }
 
-    private void ChangeControlEnabled(bool enableOrDisable)
+    private void ChangeParserControlEnabled(bool enableOrDisable)
     {
         this.startParsingButton.Enabled = enableOrDisable;
         this.parsePageFromBox.Enabled = enableOrDisable;
         this.parsePageToBox.Enabled = enableOrDisable;
+    }
+
+    private void ChangeAuthControlEnabled(bool enableOrDisable)
+    {
+        this.loginInput.Enabled = enableOrDisable;
+        this.passInput.Enabled = enableOrDisable;
+        this.captchaInput.Enabled = enableOrDisable;
+        this.captchaBox.Enabled = enableOrDisable;
+        this.authButton.Enabled = enableOrDisable;
     }
 
     private void OnChangedCityField(object? source, CityHandlerModuleEventArgs args)
@@ -175,7 +205,7 @@ public partial class MainForms : Form
             this.parsePageToBox.Text = this.parsePageToBox.Items[this.parsePageToBox.Items.Count - 1] as string;
             this.parsePageFromBox.Text = this.parsePageFromBox.Items[0] as string;
 
-            this.ChangeControlEnabled(true);
+            this.ChangeParserControlEnabled(true);
         }
     }
 
