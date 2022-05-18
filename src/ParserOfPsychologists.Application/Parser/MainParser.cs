@@ -52,7 +52,7 @@ public class MainParser : IParser
     {
         var doc = new HtmlDocument();
 
-        var xPathUserUrl = "//div[contains(@id, 'items_list_main')]/descendant::a[contains(@name, 'spec') and @href!='']";
+        var xUserUrl = "//div[contains(@id, 'items_list_main')]/descendant::a[contains(@name, 'spec') and @href!='']";
 
         var msg = new HttpRequestMessage(HttpMethod.Get, _pageNavigator.CurrentPage);
         msg.Headers.AddOrReplace("Referer", _pageNavigator.PrevPage.OriginalString, true);
@@ -60,7 +60,7 @@ public class MainParser : IParser
         doc.LoadHtml(_client.HttpRequest(msg, true));
 
         var usersUrls = doc.DocumentNode
-            .SelectNodes(xPathUserUrl)
+            .SelectNodes(xUserUrl)
             .Select(hn => new Uri($"{_pageNavigator.CurrentPage.Scheme}://{_pageNavigator.CurrentPage.Host}{hn.GetAttributeValue("href", default(string))}"));
 
         Thread.Sleep(_parserSetting.TimeoutAfterRequestToOneNumberMainPageWithUsers);
@@ -73,8 +73,8 @@ public class MainParser : IParser
         var doc = new HtmlDocument();
         var users = new List<UserModel>();
 
-        var xPathFullName = "//h1[contains(@itemprop, 'name')]";
-        var xPathSpecialtyAndCity = "//div[contains(@class, 'status')]/descendant::a[@href!='' and text()!='']";
+        var xFullName = "//h1[contains(@itemprop, 'name')]";
+        var xSpecialtyAndCity = "//div[contains(@class, 'status')]/descendant::a[@href!='' and text()!='']";
 
         var msg = new HttpRequestMessage(HttpMethod.Get, userPage);
         msg.Headers.AddOrReplace("Referer", _pageNavigator.CurrentPage.OriginalString, true);
@@ -83,10 +83,10 @@ public class MainParser : IParser
 
         var user = new UserModel
         {
-            FullName = doc.DocumentNode.SelectSingleNode(xPathFullName).InnerText,
+            FullName = doc.DocumentNode.SelectSingleNode(xFullName).InnerText,
             UrlOnSite = userPage.OriginalString
         };
-        user.ExtractSpecialtyAndCity(doc.DocumentNode.SelectSingleNode(xPathSpecialtyAndCity).InnerText);
+        user.ExtractSpecialtyAndCity(doc.DocumentNode.SelectSingleNode(xSpecialtyAndCity).InnerText);
         var contactsId = Regex.Match(doc.Text, @"(?<='spec_id_new_ppp',').*?(?=')").Value;
 
         Thread.Sleep(_parserSetting.TimeoutAfterRequestToOneUserPage);

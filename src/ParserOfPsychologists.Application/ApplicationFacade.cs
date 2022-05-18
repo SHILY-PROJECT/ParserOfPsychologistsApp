@@ -1,6 +1,4 @@
-﻿using ParserOfPsychologists.Application.Parser.CustomEventArgs;
-
-namespace ParserOfPsychologists.Application;
+﻿namespace ParserOfPsychologists.Application;
 
 public class ApplicationFacade : IApplicationFacade
 {
@@ -30,13 +28,14 @@ public class ApplicationFacade : IApplicationFacade
     public IParserSettings ParserSettings { get => _parserSettings; }
     public ICityHandlerModule CityHandler { get => _cityHandler; }
 
-    public void OpenResultsFolder() => _keeperOfResult.OpenResultsFolder();
+    public void OpenResultsFolder() =>
+        _keeperOfResult.OpenResultsFolder();
 
     public async Task<bool> ConnectAnAccountAsync()
     {
         try
         {
-            await _accountManager.ConnectAnAccountAsync();
+            await _accountManager.LoadAccountProfileAsync();
         }
         catch
         {

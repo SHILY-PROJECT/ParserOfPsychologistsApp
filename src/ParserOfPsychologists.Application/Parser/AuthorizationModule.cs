@@ -1,4 +1,4 @@
-﻿namespace ParserOfPsychologists.Application.Authorization;
+﻿namespace ParserOfPsychologists.Application.Parser;
 
 public class AuthorizationModule
 {
@@ -12,7 +12,7 @@ public class AuthorizationModule
     public Task<bool> SignInAsync(AccountData account)
     {
         /*
-         *  TODO: Добавить авторизацию.
+         *  TODO: Add authorization.
          */
         throw new NotImplementedException();
     }

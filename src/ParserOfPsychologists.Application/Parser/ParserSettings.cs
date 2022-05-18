@@ -1,4 +1,4 @@
-﻿namespace ParserOfPsychologists.Application.Models;
+﻿namespace ParserOfPsychologists.Application.Parser;
 
 public class ParserSettings : IParserSettings
 {

@@ -2,8 +2,7 @@
 
 public interface IAccountManager
 {
-    AccountData CurrentAccount { get; }
-    Task<bool> ConnectAnAccountAsync();
+    AccountData Account { get; }
     Task<bool> SaveAccountProfileAsync();
     Task<bool> LoadAccountProfileAsync();
 }

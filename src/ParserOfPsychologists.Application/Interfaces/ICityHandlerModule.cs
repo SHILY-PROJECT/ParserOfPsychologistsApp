@@ -1,6 +1,4 @@
-﻿using ParserOfPsychologists.Application.Parser.CustomEventArgs;
-
-namespace ParserOfPsychologists.Application.Interfaces;
+﻿namespace ParserOfPsychologists.Application.Interfaces;
 
 public interface ICityHandlerModule
 {

@@ -4,6 +4,8 @@ public static class ApplicationRegistrator
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
+        ApplicationRegistrator.AddErrorsForVerifyContent();
+
         var cfg = HttpClientConfiguration.CreateConfiguration();
 
         services
@@ -18,8 +20,6 @@ public static class ApplicationRegistrator
             .AddScoped<AccountData>()
             .AddScoped<AuthorizationModule>()
             .AddTransient(opt => HttpHelper.CreateHttpClient(cfg));
-
-        ApplicationRegistrator.AddErrorsForVerifyContent();
 
         return services;
     }

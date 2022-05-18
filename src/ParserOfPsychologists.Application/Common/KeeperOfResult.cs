@@ -1,6 +1,6 @@
 ﻿using CsvHelper;
 
-namespace ParserOfPsychologists.Application.Parser;
+namespace ParserOfPsychologists.Application.Common;
 
 public class KeeperOfResult : IKeeperOfResult
 {
@@ -38,6 +38,6 @@ public class KeeperOfResult : IKeeperOfResult
         });
     }
 
-    private FileInfo GetFileOfResult(string extension) => 
+    private FileInfo GetFileOfResult(string extension) =>
         new(Path.Combine(Dir.FullName, $"result   {DateTime.Now:yyyy-MM-dd   HH-mm-ss---fffffff}{extension}"));
 }

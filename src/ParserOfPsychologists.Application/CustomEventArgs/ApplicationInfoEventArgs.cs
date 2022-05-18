@@ -1,4 +1,4 @@
-﻿namespace ParserOfPsychologists.Application.Parser.CustomEventArgs;
+﻿namespace ParserOfPsychologists.Application.CustomEventArgs;
 
 public class ApplicationInfoEventArgs : EventArgs
 {
