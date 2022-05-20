@@ -91,7 +91,7 @@ public partial class MainForms : Form
         if (box.Checked)
         {
             this.ChangeAuthControlEnabled(true);
-            this.captchaBox.Image = await ((AuthorizationModule)_facade.Authorization).GetCaptcha();
+            this.captchaBox.Image = (await ((AuthorizationModule)_facade.Authorization).UpdateCaptcha()).Img;
         }
         else
         {

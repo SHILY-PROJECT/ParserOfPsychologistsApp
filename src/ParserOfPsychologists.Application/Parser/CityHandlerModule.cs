@@ -54,11 +54,9 @@ public class CityHandlerModule : ICityHandlerModule
         {
             Method = HttpMethod.Post,
             RequestUri = new Uri($"{_parserSettings.MainUrl}/city_backend.php"),
-            Content = new StringContent($"mod=backend&city_text={cityName}"),
+            Content = new StringContent($"mod=backend&city_text={cityName}", Encoding.UTF8, "application/x-www-form-urlencoded"),
         };
-        msg.Headers.Add("Connection", "keep-alive");
-        msg.Content.Headers.ContentType = new("application/x-www-form-urlencoded");
-        msg.Content.Headers.ContentEncoding.Add("UTF-8");
+        msg.Headers.AddOrReplace("Connection", "keep-alive");
 
         var doc = new HtmlDocument();
         var resp = await _client.HttpRequestAsync(msg);
