@@ -19,6 +19,7 @@ public static class ApplicationRegistrator
             .AddScoped<IAuthorization, AuthorizationModule>()
             .AddScoped<IAccountManager, AccountManager>()
             .AddScoped<AccountData>()
+            .AddScoped<CaptchaModel>()
             .AddTransient(opt => HttpHelper.CreateHttpClient(cfg));
 
         return services;
