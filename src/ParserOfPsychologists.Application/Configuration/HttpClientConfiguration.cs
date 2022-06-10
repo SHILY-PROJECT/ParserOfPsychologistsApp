@@ -15,6 +15,7 @@ public class HttpClientConfiguration : IHttpClientConfiguration
         cfg.HttpClientHandler = new HttpClientHandler()
         {
             AllowAutoRedirect = false,
+            MaxAutomaticRedirections = 5,
             AutomaticDecompression = DecompressionMethods.All,
             CookieContainer = cfg.CookieContainer = new()
         };
@@ -28,5 +29,11 @@ public class HttpClientConfiguration : IHttpClientConfiguration
         };
 
         return cfg;
+    }
+
+    public void ChangeRedirect(bool allowAutoRedirect, int maxAutomaticRedirections = 5)
+    {
+        this.HttpClientHandler.AllowAutoRedirect = allowAutoRedirect;
+        this.HttpClientHandler.MaxAutomaticRedirections = maxAutomaticRedirections;
     }
 }

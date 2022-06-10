@@ -9,12 +9,13 @@ public interface IApplicationFacade
     IAuthorization Authorization { get; }
     ICityHandlerModule CityHandler { get; }
     IKeeperOfResult KeeperOfResult { get; }
+    IAccountManager AccountManager { get; }
 
     void OpenResultsFolder();
 
     Task<IDictionary<string, string>> GetDefaultCities();
     Task ChangeCityAsync();
-    Task<bool> ConnectAnAccountAsync();
+    Task<bool> ConnectAccountAsync();
     Task<IDictionary<string, string>> FindCityAsync(string cityName);
     Task ParseUsersByCityAsync();
 }

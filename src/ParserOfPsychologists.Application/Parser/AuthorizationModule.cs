@@ -6,13 +6,20 @@ public class AuthorizationModule : IAuthorization
     private readonly HttpClient _client;
     private readonly AccountData _account;
     private readonly CaptchaModel _captcha;
+    private readonly HttpClientConfiguration _httpClientConfiguration;
 
-    public AuthorizationModule(IParserSettings parserSettings, HttpClient client, AccountData account, CaptchaModel captcha)
+    public AuthorizationModule(
+        IParserSettings parserSettings,
+        HttpClient client,
+        AccountData account,
+        CaptchaModel captcha,
+        IHttpClientConfiguration httpClientConfiguration)
     {
         _parserSettings = parserSettings;
         _client = client;
         _account = account;
         _captcha = captcha;
+        _httpClientConfiguration = (HttpClientConfiguration)httpClientConfiguration;
     }
 
     public async Task<bool> SignInAsync()
@@ -20,21 +27,27 @@ public class AuthorizationModule : IAuthorization
         if (string.IsNullOrWhiteSpace(_account.Login)) throw new InvalidOperationException("Login cannot be empty.");
         if (string.IsNullOrWhiteSpace(_account.Password)) throw new InvalidOperationException("Password cannot be empty.");
 
+        var xErrorBox = "//div[contains(@class, 'box-red')]";
+        var xPrivatMessages = "//div[contains(@id, 'main')]/descendant::a[contains(@href, 'privat')]";
+
         var msg = new HttpRequestMessage(HttpMethod.Post, $"{_parserSettings.MainUrl}/login.php?action=login")
         {
             Content = new StringContent($"referer=&l_login={HttpUtility.UrlEncode(_account.Login)}&l_password={HttpUtility.UrlEncode(_account.Password)}&captha_id={_captcha.Id}&captha_id_key={_captcha.Key}&captha_text={_captcha.InputText}", Encoding.UTF8, "application/x-www-form-urlencoded")
         };
         msg.Headers.AddOrReplace("Referer", $"{_parserSettings.MainUrl}/login.php");
 
-        var resp = await _client.SendAsync(msg);
+        _httpClientConfiguration.ChangeRedirect(true);
+        var resp = await _client.HttpRequestAsync(msg);
+        _httpClientConfiguration.ChangeRedirect(false);
 
-        if (resp.Headers.GetValues("Location").FirstOrDefault() is string value && value.Equals("/"))
+        var doc = new HtmlDocument();
+        doc.LoadHtml(resp);
+
+        if (doc.DocumentNode?.SelectSingleNode(xPrivatMessages) is null) throw new InvalidOperationException(xErrorBox switch
         {
-            msg = new HttpRequestMessage(HttpMethod.Post, $"{_parserSettings.MainUrl}{value}");
-            msg.Headers.AddOrReplace("Referer", $"{_parserSettings.MainUrl}/login.php");
-            _ = await _client.HttpRequestAsync(msg, true);
-        }
-        else throw new InvalidOperationException("Something went wrong during authorization...");
+            _ when doc.DocumentNode?.SelectSingleNode(xErrorBox) is HtmlNode node => node.InnerText,
+            _ => "Unknown authorization error."
+        });
 
         return true;
     }

@@ -37,20 +37,20 @@ internal partial class WaitForm
             this.loadingBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.loadingBar.TabIndex = 0;
             // 
-            // label1
+            // pageLabel
             // 
             this.pageLabel.AutoSize = true;
             this.pageLabel.Location = new System.Drawing.Point(6, 21);
-            this.pageLabel.Name = "label1";
+            this.pageLabel.Name = "pageLabel";
             this.pageLabel.Size = new System.Drawing.Size(144, 19);
             this.pageLabel.TabIndex = 1;
             this.pageLabel.Text = "Страниц обработано:";
             // 
-            // label2
+            // usersLabel
             // 
             this.usersLabel.AutoSize = true;
             this.usersLabel.Location = new System.Drawing.Point(6, 40);
-            this.usersLabel.Name = "label2";
+            this.usersLabel.Name = "usersLabel";
             this.usersLabel.Size = new System.Drawing.Size(163, 19);
             this.usersLabel.TabIndex = 1;
             this.usersLabel.Text = "Пользователей собрано:";
@@ -78,7 +78,10 @@ internal partial class WaitForm
             this.Controls.Add(this.groupBox1);
             this.Font = new System.Drawing.Font("Segoe UI Semilight", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "WaitForm";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LoadBar";
             this.groupBox1.ResumeLayout(false);

@@ -51,6 +51,7 @@ public partial class MainForms : Form
         this.openResultsButton.Click += (s, e) => _facade.OpenResultsFolder();
 
         this.connectAccount.CheckedChanged += async (s, e) => await OnConnectAccount(s, e);
+        this.captchaBox.Click += async (s, e) => await OnUpdateCaptchaImg(s, e);
     }
 
     private void OnClickClearCityField()
@@ -98,6 +99,14 @@ public partial class MainForms : Form
             this.ChangeAuthControlEnabled(false);
             this.captchaBox.Image = default;
         }
+    }
+
+    private async Task OnUpdateCaptchaImg(object? source, EventArgs args)
+    {
+        if (source is not PictureBox) return;
+
+        this.ChangeAuthControlEnabled(true);
+        this.captchaBox.Image = (await ((AuthorizationModule)_facade.Authorization).UpdateCaptcha()).Img;
     }
 
     private async Task OnValueChangedCitiesBox(object? source, EventArgs args)
@@ -158,7 +167,6 @@ public partial class MainForms : Form
             _parserSettings.PageFrom = this.PageNumberOf(this.parsePageFromBox.Text);
 
             waitForm.Owner = this;
-            waitForm.ShowInTaskbar = false;
             this.Enabled = false;
 
             waitForm.Show();
@@ -243,6 +251,6 @@ public partial class MainForms : Form
         var separator = "SHILY ";
         var endOf = new List<string> { "ಠ_ಠ", "(¬_¬ )", "ಠ▃ಠ", "ಠಿ_ಠ", "⚆_⚆", "( •̀ ω •́ )y", "(╹ڡ╹ )", "(¬‿¬)", "(⊙﹏⊙)", "(⊙ˍ⊙)", "⊙﹏⊙∥", ",,ԾㅂԾ,,", "(。﹏。)", "(⊙_⊙)？", "ಠ╭╮ಠ" };
         var title = this.Text.Split(new string[] { separator }, StringSplitOptions.None);
-        this.Text = $"{title.FirstOrDefault()}{separator}{endOf[new Random().Next(endOf.Count)]}";
+        this.Text = $"{title.FirstOrDefault()} {endOf[new Random().Next(endOf.Count)]}";
     }
 }

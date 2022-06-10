@@ -32,11 +32,12 @@ public class ApplicationFacade : IApplicationFacade
     public IAuthorization Authorization { get => _authorization; }
     public ICityHandlerModule CityHandler { get => _cityHandler; }
     public IKeeperOfResult KeeperOfResult { get => _keeperOfResult; }
+    public IAccountManager AccountManager { get => _accountManager; }
 
     public void OpenResultsFolder() =>
         _keeperOfResult.OpenResultsFolder();
 
-    public async Task<bool> ConnectAnAccountAsync()
+    public async Task<bool> ConnectAccountAsync()
     {
         try
         {
