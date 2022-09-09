@@ -1,4 +1,14 @@
-﻿namespace ParserOfPsychologists.Application.Parser;
+﻿using System.Web;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Drawing;
+using HtmlAgilityPack;
+using ParserOfPsychologists.Application.Models;
+using ParserOfPsychologists.Application.Toolkit;
+using ParserOfPsychologists.Application.Interfaces;
+using ParserOfPsychologists.Application.Configuration;
+
+namespace ParserOfPsychologists.Application.Parser;
 
 public class AuthorizationModule : IAuthorization
 {

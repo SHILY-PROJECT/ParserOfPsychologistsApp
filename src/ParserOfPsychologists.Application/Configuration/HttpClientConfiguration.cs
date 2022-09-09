@@ -1,4 +1,7 @@
-﻿namespace ParserOfPsychologists.Application.Configuration;
+﻿using System.Net;
+using ParserOfPsychologists.Application.Interfaces;
+
+namespace ParserOfPsychologists.Application.Configuration;
 
 public class HttpClientConfiguration : IHttpClientConfiguration
 {

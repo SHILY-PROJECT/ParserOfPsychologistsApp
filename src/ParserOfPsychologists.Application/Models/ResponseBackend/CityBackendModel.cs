@@ -1,4 +1,8 @@
-﻿namespace ParserOfPsychologists.Application.Models.ResponseBackend;
+﻿using System.Text;
+using System.Text.Json.Serialization;
+using System.Web;
+
+namespace ParserOfPsychologists.Application.Models.ResponseBackend;
 
 public class CityBackendModel
 {

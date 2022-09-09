@@ -1,4 +1,9 @@
 ﻿using CsvHelper;
+using System.Text;
+using System.Diagnostics;
+using ParserOfPsychologists.Application.Models;
+using ParserOfPsychologists.Application.Interfaces;
+using ParserOfPsychologists.Application.Configuration;
 
 namespace ParserOfPsychologists.Application.Common;
 

@@ -1,4 +1,6 @@
-﻿namespace ParserOfPsychologists.Application.Toolkit;
+﻿using ParserOfPsychologists.Application.Models;
+
+namespace ParserOfPsychologists.Application.Toolkit;
 
 public static class UserExtensions
 {

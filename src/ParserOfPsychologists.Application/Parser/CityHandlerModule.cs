@@ -1,4 +1,12 @@
-﻿namespace ParserOfPsychologists.Application.Parser;
+﻿using System.Text;
+using System.Text.Json;
+using HtmlAgilityPack;
+using ParserOfPsychologists.Application.Models.ResponseBackend;
+using ParserOfPsychologists.Application.Toolkit;
+using ParserOfPsychologists.Application.Interfaces;
+using ParserOfPsychologists.Application.CustomEventArgs;
+
+namespace ParserOfPsychologists.Application.Parser;
 
 public class CityHandlerModule : ICityHandlerModule
 {

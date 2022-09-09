@@ -1,4 +1,6 @@
-﻿namespace ParserOfPsychologists.Application.Parser;
+﻿using ParserOfPsychologists.Application.Interfaces;
+
+namespace ParserOfPsychologists.Application.Parser;
 
 public class PageNavigator : IPageNavigator
 {

@@ -1,4 +1,8 @@
-﻿namespace ParserOfPsychologists.Application.Toolkit;
+﻿using System.Net.Http.Headers;
+using System.Text;
+using ParserOfPsychologists.Application.Interfaces;
+
+namespace ParserOfPsychologists.Application.Toolkit;
 
 public static class HttpHelper
 {

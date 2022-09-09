@@ -1,4 +1,7 @@
-﻿namespace ParserOfPsychologists.Application.Parser;
+﻿using System.Text.RegularExpressions;
+using ParserOfPsychologists.Application.Interfaces;
+
+namespace ParserOfPsychologists.Application.Parser;
 
 public class ParserSettings : IParserSettings
 {
