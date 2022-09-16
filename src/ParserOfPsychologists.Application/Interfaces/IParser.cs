@@ -1,4 +1,7 @@
-﻿namespace ParserOfPsychologists.Application.Interfaces;
+﻿using ParserOfPsychologists.Application.Models;
+using ParserOfPsychologists.Application.CustomEventArgs;
+
+namespace ParserOfPsychologists.Application.Interfaces;
 
 public interface IParser
 {

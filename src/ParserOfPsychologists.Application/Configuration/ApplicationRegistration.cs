@@ -1,10 +1,34 @@
-﻿namespace ParserOfPsychologists.Application.Configuration;
+﻿using System;
+using System.Web;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using Microsoft.Extensions.DependencyInjection;
+using HtmlAgilityPack;
+using ParserOfPsychologists.Application.Parser;
+using ParserOfPsychologists.Application.Models;
+using ParserOfPsychologists.Application.Models.ResponseBackend;
+using ParserOfPsychologists.Application.Toolkit;
+using ParserOfPsychologists.Application.Interfaces;
+using ParserOfPsychologists.Application.Common;
+using ParserOfPsychologists.Application.Configuration;
+using ParserOfPsychologists.Application.CustomEventArgs;
 
-public static class ApplicationRegistrator
+namespace ParserOfPsychologists.Application.Configuration;
+
+public static class ApplicationRegistration
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        ApplicationRegistrator.AddErrorsForVerifyContent();
+        ApplicationRegistration.AddErrorsForVerifyContent();
 
         var cfg = HttpClientConfiguration.CreateConfiguration();
 

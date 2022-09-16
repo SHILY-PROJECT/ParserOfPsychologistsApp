@@ -1,4 +1,6 @@
-﻿namespace ParserOfPsychologists.Application.Models;
+﻿using System.Drawing;
+
+namespace ParserOfPsychologists.Application.Models;
 
 public class CaptchaModel
 {

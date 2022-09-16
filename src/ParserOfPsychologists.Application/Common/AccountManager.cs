@@ -1,4 +1,7 @@
-﻿namespace ParserOfPsychologists.Application.Common;
+﻿using ParserOfPsychologists.Application.Models;
+using ParserOfPsychologists.Application.Interfaces;
+
+namespace ParserOfPsychologists.Application.Common;
 
 public class AccountManager : IAccountManager
 {

@@ -1,6 +1,6 @@
 ﻿namespace ParserOfPsychologists.WinFormsUI.Configuration;
 
-public static class WinFormsUIRegistrator
+public static class WinFormsUIRegistration
 {
     public static IServiceCollection AddWinFormsUI(this IServiceCollection services)
     {
